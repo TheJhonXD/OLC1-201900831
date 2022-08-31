@@ -1,0 +1,47 @@
+package Analizadores;
+import java_cup.runtime.Symbol;
+
+
+parser code 
+{:
+    /*Method that is called when parser can be recovered*/
+    public void syntax_error(Symbol s){ 
+        System.out.println("Unexpected token: " +s.value);
+        System.out.println("Error sintactico en la linea " + (s.left + 1) + " column " + (s.right + 1));
+    }
+
+    /*Method that is called when parser can't be recovered*/
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        System.out.println("Error sintactico unrecovered: " + s.value);
+        System.out.println("Error sintactico unrecovered en la linea " + s.right + " column " + s.left);
+    } 
+:}
+
+
+terminal String tnum;
+terminal trest,tsum,tdiv,tmul,tpot,tmod;
+terminal String tinicio, tfin;
+terminal tcadena, tbool, tchar;
+
+non terminal String INICIO;
+non terminal Double E;
+
+precedence left tsum, trest;
+precedence left tdiv, tmul;
+precedence left tmod, tpot;
+
+
+start with INICIO;
+
+INICIO ::= tinicio E:result tfin{: System.out.println("Resultado: " + result); :}
+    |error tfin
+;
+
+E ::= E:a tsum E:b  {: RESULT = a + b; :}
+    | E:a trest E:b {: RESULT = a - b; :}
+    | E:a tdiv E:b  {: RESULT = a / b; :}
+    | E:a tmul E:b  {: RESULT = a * b; :}
+    | E:a tpot E:b  {: RESULT = Math.pow(a, b); :}
+    | E:a tmod E:b  {: RESULT = a % b; :}
+    | tnum:a        {: RESULT = Double.parseDouble(a); :}
+;

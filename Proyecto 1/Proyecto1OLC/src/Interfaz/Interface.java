@@ -10,9 +10,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import Analizadores.Parser;
+import Analizadores.Scanner;
 
 /**
  *
@@ -37,7 +40,9 @@ public class Interface extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jEditor = new javax.swing.JTextArea();
+        jCajaTexto = new javax.swing.JTextArea();
+        jBtnClean = new javax.swing.JButton();
+        jBtnRun = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jFile = new javax.swing.JMenu();
         jOpenFile = new javax.swing.JMenuItem();
@@ -52,10 +57,19 @@ public class Interface extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Proyecto 1 OLC");
 
-        jEditor.setColumns(20);
-        jEditor.setRows(5);
-        jEditor.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        jScrollPane1.setViewportView(jEditor);
+        jCajaTexto.setColumns(20);
+        jCajaTexto.setRows(5);
+        jCajaTexto.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jScrollPane1.setViewportView(jCajaTexto);
+
+        jBtnClean.setText("Clean");
+
+        jBtnRun.setText("Run");
+        jBtnRun.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jBtnRunMousePressed(evt);
+            }
+        });
 
         jFile.setText("File");
         jFile.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -116,15 +130,24 @@ public class Interface extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap(43, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 679, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jBtnClean)
+                        .addGap(18, 18, 18)
+                        .addComponent(jBtnRun))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 679, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(38, 38, 38))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(68, Short.MAX_VALUE)
+                .addGap(16, 16, 16)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jBtnClean)
+                    .addComponent(jBtnRun))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(65, 65, 65))
         );
@@ -192,7 +215,7 @@ public class Interface extends javax.swing.JFrame {
             this.setTitle(chooser.getSelectedFile().getName());
             String texto = readFile(chooser.getSelectedFile());
             //System.out.println(texto);
-            jEditor.setText(texto);
+            jCajaTexto.setText(texto);
         }
     }//GEN-LAST:event_jOpenFileMousePressed
     
@@ -205,9 +228,21 @@ public class Interface extends javax.swing.JFrame {
         int selec = save.showSaveDialog(null);
         if (selec == JFileChooser.APPROVE_OPTION){
             save.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            saveFile(save.getSelectedFile(), jEditor.getText());
+            saveFile(save.getSelectedFile(), jCajaTexto.getText());
         }
     }//GEN-LAST:event_JSaveAsMousePressed
+
+    private void jBtnRunMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtnRunMousePressed
+        try {
+            String text = jCajaTexto.getText();
+            //System.out.println(text);
+            Scanner scanner = new Scanner(new BufferedReader(new StringReader(text)));
+            Parser parser = new Parser(scanner);
+            parser.parse();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }//GEN-LAST:event_jBtnRunMousePressed
 
     
     
@@ -249,7 +284,9 @@ public class Interface extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem JSaveAs;
-    private javax.swing.JTextArea jEditor;
+    private javax.swing.JButton jBtnClean;
+    private javax.swing.JButton jBtnRun;
+    private javax.swing.JTextArea jCajaTexto;
     private javax.swing.JMenuItem jErrors;
     private javax.swing.JMenu jFile;
     private javax.swing.JMenuItem jFlowchart;
