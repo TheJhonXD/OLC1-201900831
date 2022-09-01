@@ -8,35 +8,87 @@ package Analizadores;
 /** CUP generated class containing symbol constants. */
 public class Simbolos {
   /* terminals */
-  public static final int tmul = 6;
-  public static final int trest = 3;
-  public static final int tbool = 12;
-  public static final int tnum = 2;
-  public static final int tcadena = 11;
-  public static final int tsum = 4;
-  public static final int tinicio = 9;
-  public static final int tpot = 7;
-  public static final int tmod = 8;
+  public static final int telseif = 34;
+  public static final int tcon_val = 26;
+  public static final int tigual = 27;
+  public static final int tparB = 14;
+  public static final int tparA = 13;
+  public static final int tor = 21;
+  public static final int tmenor_igual = 18;
+  public static final int tingresar = 24;
+  public static final int tpot = 10;
+  public static final int tif = 30;
+  public static final int tbool = 36;
+  public static final int tcadena = 35;
+  public static final int tpar1 = 12;
+  public static final int tcomo = 25;
+  public static final int tmenor = 16;
+  public static final int tfin = 5;
+  public static final int tpcoma = 3;
+  public static final int tmayor = 15;
+  public static final int ml_cmt = 39;
+  public static final int tnot = 23;
+  public static final int tarrow = 29;
+  public static final int tand = 22;
+  public static final int tendif = 32;
+  public static final int tundersc = 28;
   public static final int EOF = 0;
-  public static final int tfin = 10;
+  public static final int tdiv = 8;
   public static final int error = 1;
-  public static final int tdiv = 5;
-  public static final int tchar = 13;
+  public static final int tnum = 2;
+  public static final int tinicio = 4;
+  public static final int trest = 6;
+  public static final int telse = 33;
+  public static final int tdifer = 20;
+  public static final int tmul = 9;
+  public static final int tthen = 31;
+  public static final int tsgl_cmt = 38;
+  public static final int tmod = 11;
+  public static final int tes_igual = 19;
+  public static final int tsum = 7;
+  public static final int tchar = 37;
+  public static final int tmayor_igual = 17;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "tnum",
+  "tpcoma",
+  "tinicio",
+  "tfin",
   "trest",
   "tsum",
   "tdiv",
   "tmul",
   "tpot",
   "tmod",
-  "tinicio",
-  "tfin",
+  "tpar1",
+  "tparA",
+  "tparB",
+  "tmayor",
+  "tmenor",
+  "tmayor_igual",
+  "tmenor_igual",
+  "tes_igual",
+  "tdifer",
+  "tor",
+  "tand",
+  "tnot",
+  "tingresar",
+  "tcomo",
+  "tcon_val",
+  "tigual",
+  "tundersc",
+  "tarrow",
+  "tif",
+  "tthen",
+  "tendif",
+  "telse",
+  "telseif",
   "tcadena",
   "tbool",
-  "tchar"
+  "tchar",
+  "tsgl_cmt",
+  "ml_cmt"
   };
 }
 

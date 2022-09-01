@@ -19,9 +19,14 @@ parser code
 
 
 terminal String tnum;
-terminal trest,tsum,tdiv,tmul,tpot,tmod;
-terminal String tinicio, tfin;
-terminal tcadena, tbool, tchar;
+terminal tpcoma;
+terminal tinicio, tfin;
+terminal trest,tsum,tdiv,tmul,tpot,tmod, tpar1, tparA, tparB;
+terminal tmayor, tmenor, tmayor_igual, tmenor_igual, tes_igual, tdifer;
+terminal tor, tand, tnot;
+terminal tingresar, tcomo, tcon_val, tigual, tundersc, tarrow;
+terminal tif, tthen, tendif, telse, telseif;
+terminal tcadena, tbool, tchar, tsgl_cmt, ml_cmt;
 
 non terminal String INICIO;
 non terminal Double E;
