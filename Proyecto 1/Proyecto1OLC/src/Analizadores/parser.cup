@@ -21,32 +21,62 @@ parser code
 terminal String tnum;
 terminal tpcoma;
 terminal tinicio, tfin;
-terminal trest,tsum,tdiv,tmul,tpot,tmod, tpar1, tparA, tparB;
+terminal tint, tstring, tbool, tchar;
+terminal trest,tsum,tdiv,tmul,tpot,tmod, tpar1, tparA, tparC;
 terminal tmayor, tmenor, tmayor_igual, tmenor_igual, tes_igual, tdifer;
 terminal tor, tand, tnot;
-terminal tingresar, tcomo, tcon_val, tigual, tundersc, tarrow;
+terminal tingresar, tcomo, tcon_val, tcoma, tvar_name, tarrow;
 terminal tif, tthen, tendif, telse, telseif;
-terminal tcadena, tbool, tchar, tsgl_cmt, ml_cmt;
+terminal tcadena, tboolean, tcaracter, tsgl_cmt, tml_cmt;
 
-non terminal String INICIO;
-non terminal Double E;
+non terminal S;
+non terminal INSTRUCTIONS, INSTRUCTION;
+non terminal STATEMENTS, STATEMENT, VAR, DATATYPE;
+non terminal ASSIGNMENT;
+non terminal EXPRESSION;
 
 precedence left tsum, trest;
 precedence left tdiv, tmul;
 precedence left tmod, tpot;
 
+precedence left tcoma;
 
-start with INICIO;
 
-INICIO ::= tinicio E:result tfin{: System.out.println("Resultado: " + result); :}
-    |error tfin
+start with S;
+
+S ::= tinicio INSTRUCTIONS tfin
+    | error tfin
 ;
 
-E ::= E:a tsum E:b  {: RESULT = a + b; :}
-    | E:a trest E:b {: RESULT = a - b; :}
-    | E:a tdiv E:b  {: RESULT = a / b; :}
-    | E:a tmul E:b  {: RESULT = a * b; :}
-    | E:a tpot E:b  {: RESULT = Math.pow(a, b); :}
-    | E:a tmod E:b  {: RESULT = a % b; :}
-    | tnum:a        {: RESULT = Double.parseDouble(a); :}
+INSTRUCTIONS ::= INSTRUCTIONS INSTRUCTION tpcoma
+    | INSTRUCTION tpcoma
+    | error tpcoma
+;
+
+INSTRUCTION ::= STATEMENT
+    | ASSIGNMENT
+;
+
+STATEMENT ::= tingresar VAR tcomo DATATYPE tcon_val EXPRESSION
+;
+
+VAR ::= VAR tcoma VAR
+    | tvar_name
+;
+
+DATATYPE ::= tint
+    | tstring
+    | tbool
+    | tchar
+;
+
+ASSIGNMENT ::= VAR tarrow EXPRESSION;
+
+EXPRESSION ::= EXPRESSION tsum EXPRESSION 
+    | EXPRESSION trest EXPRESSION
+    | EXPRESSION tdiv EXPRESSION 
+    | EXPRESSION tmul EXPRESSION 
+    | EXPRESSION tpot EXPRESSION  
+    | EXPRESSION tmod EXPRESSION 
+    | tnum        
 ;

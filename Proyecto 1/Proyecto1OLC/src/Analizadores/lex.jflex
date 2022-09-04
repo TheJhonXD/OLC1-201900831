@@ -21,6 +21,7 @@ booleano = (Falso|Verdadero)
 caracter = ('([a-zA-Z])'|'\$\{(6[5-9]|[7-8][0-9]|(90)|9[7-9]|1[0-1][0-9]|12[0-2])\}')
 sgl_cmt = (\#.+)
 ml_cmt = (\/\*[^*]*\*+([^\/\*][^\*]*\*+)*\/)
+var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
 
 
 %%
@@ -31,6 +32,11 @@ ml_cmt = (\/\*[^*]*\*+([^\/\*][^\*]*\*+)*\/)
 
     "inicio"            { return new Symbol(Simbolos.tinicio, yycolumn, yyline, yytext());      }
     "fin"               { return new Symbol(Simbolos.tfin, yycolumn, yyline, yytext());         }
+
+    "entero"            { return new Symbol(Simbolos.tint, yycolumn, yyline, yytext());         }
+    "cadena"            { return new Symbol(Simbolos.tstring, yycolumn, yyline, yytext());      }
+    "Boolean"           { return new Symbol(Simbolos.tbool, yycolumn, yyline, yytext());     }
+    "Caracter"          { return new Symbol(Simbolos.tchar, yycolumn, yyline, yytext());         }
 
     "-"                 { return new Symbol(Simbolos.trest, yycolumn, yyline, yytext());        }
     "+"                 { return new Symbol(Simbolos.tsum, yycolumn, yyline, yytext());         }
@@ -55,8 +61,7 @@ ml_cmt = (\/\*[^*]*\*+([^\/\*][^\*]*\*+)*\/)
     "ingresar"          { return new Symbol(Simbolos.tingresar, yycolumn, yyline, yytext());    }
     "como"              { return new Symbol(Simbolos.tcomo, yycolumn, yyline, yytext());        }
     "con_valor"         { return new Symbol(Simbolos.tcon_val, yycolumn, yyline, yytext());     }
-    "="                 { return new Symbol(Simbolos.tigual, yycolumn, yyline, yytext());       }
-    "_"                 { return new Symbol(Simbolos.tundersc, yycolumn, yyline, yytext());     }
+    ","                 { return new Symbol(Simbolos.tcoma, yycolumn, yyline, yytext());       }
     "->"                { return new Symbol(Simbolos.tarrow, yycolumn, yyline, yytext());       }
 
     "si"                { return new Symbol(Simbolos.tif, yycolumn, yyline, yytext());          }
@@ -67,10 +72,11 @@ ml_cmt = (\/\*[^*]*\*+([^\/\*][^\*]*\*+)*\/)
 
     {num}               { return new Symbol(Simbolos.tnum, yycolumn, yyline, yytext());         }
     {cadena}            { return new Symbol(Simbolos.tcadena, yycolumn, yyline, yytext());      }
-    {booleano}          { return new Symbol(Simbolos.tbool, yycolumn, yyline, yytext());        }
-    {caracter}          { return new Symbol(Simbolos.tchar, yycolumn, yyline, yytext());        }
+    {booleano}          { return new Symbol(Simbolos.tboolean, yycolumn, yyline, yytext());     }
+    {caracter}          { return new Symbol(Simbolos.tcaracter, yycolumn, yyline, yytext());    }
     {sgl_cmt}           { return new Symbol(Simbolos.tsgl_cmt, yycolumn, yyline, yytext());     }
     {ml_cmt}            { return new Symbol(Simbolos.tml_cmt, yycolumn, yyline, yytext());      }
+    {var_name}          { return new Symbol(Simbolos.tvar_name, yycolumn, yyline, yytext());    }
 
 }
 
