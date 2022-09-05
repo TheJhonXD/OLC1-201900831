@@ -7,7 +7,7 @@ parser code
     /*Method that is called when parser can be recovered*/
     public void syntax_error(Symbol s){ 
         System.out.println("Unexpected token: " +s.value);
-        System.out.println("Error sintactico en la linea " + (s.left + 1) + " column " + (s.right + 1));
+        System.out.println("Error sintactico en la linea " + (s.right + 1) + " column " + (s.left + 1));
     }
 
     /*Method that is called when parser can't be recovered*/
@@ -22,39 +22,50 @@ terminal String tnum;
 terminal tpcoma;
 terminal tinicio, tfin;
 terminal tint, tstring, tbool, tchar;
-terminal trest,tsum,tdiv,tmul,tpot,tmod, tpar1, tparA, tparC;
+terminal trest,tsum,tdiv,tmul,tpot,tmod, tparA, tparC;
 terminal tmayor, tmenor, tmayor_igual, tmenor_igual, tes_igual, tdifer;
 terminal tor, tand, tnot;
 terminal tingresar, tcomo, tcon_val, tcoma, tvar_name, tarrow;
 terminal tif, tthen, tendif, telse, telseif;
-terminal tcadena, tboolean, tcaracter, tsgl_cmt, tml_cmt;
+terminal tcadena, tboolean, tcaracter;
 
 non terminal S;
 non terminal INSTRUCTIONS, INSTRUCTION;
-non terminal STATEMENTS, STATEMENT, VAR, DATATYPE;
+non terminal STATEMENT, VAR, DATATYPE;
 non terminal ASSIGNMENT;
 non terminal EXPRESSION;
+non terminal CONDITIONAL, CONDITIONALS, CONDITION, REL, OP_REL;
 
+precedence left tcoma;
+
+precedence nonassoc tmayor, tmenor, tmayor_igual, tmenor_igual;
+precedence nonassoc tes_igual, tdifer;
+
+precedence left tand, tor;
+precedence right tnot;
 precedence left tsum, trest;
 precedence left tdiv, tmul;
 precedence left tmod, tpot;
+precedence left tparA, tparC;
 
-precedence left tcoma;
 
 
 start with S;
 
 S ::= tinicio INSTRUCTIONS tfin
+    | tinicio tfin
     | error tfin
 ;
 
-INSTRUCTIONS ::= INSTRUCTIONS INSTRUCTION tpcoma
-    | INSTRUCTION tpcoma
-    | error tpcoma
+INSTRUCTIONS ::= INSTRUCTIONS INSTRUCTION
+    | INSTRUCTION
 ;
 
-INSTRUCTION ::= STATEMENT
-    | ASSIGNMENT
+INSTRUCTION ::= STATEMENT tpcoma
+    | ASSIGNMENT tpcoma
+    | CONDITIONAL tendif
+    | error tpcoma
+    | error tendif
 ;
 
 STATEMENT ::= tingresar VAR tcomo DATATYPE tcon_val EXPRESSION
@@ -72,11 +83,46 @@ DATATYPE ::= tint
 
 ASSIGNMENT ::= VAR tarrow EXPRESSION;
 
-EXPRESSION ::= EXPRESSION tsum EXPRESSION 
+
+CONDITIONAL ::= tif CONDITION tthen INSTRUCTIONS
+    | tif CONDITION INSTRUCTIONS telse INSTRUCTIONS
+    | tif CONDITION CONDITIONALS
+;
+
+CONDITIONALS ::= CONDITIONALS telseif CONDITION tthen INSTRUCTIONS
+    | telse INSTRUCTIONS
+;
+
+CONDITION ::= CONDITION tor CONDITION
+    | CONDITION tand CONDITION
+    | tnot CONDITION
+    | REL
+;
+
+REL ::= EXPRESSION OP_REL EXPRESSION
+    | EXPRESSION
+;
+
+OP_REL ::= tmayor
+    | tmenor
+    | tmayor_igual
+    | tmenor_igual
+    | tes_igual
+    | tdifer
+;
+
+EXPRESSION ::= trest EXPRESSION
+    | EXPRESSION tsum EXPRESSION 
     | EXPRESSION trest EXPRESSION
     | EXPRESSION tdiv EXPRESSION 
     | EXPRESSION tmul EXPRESSION 
     | EXPRESSION tpot EXPRESSION  
-    | EXPRESSION tmod EXPRESSION 
-    | tnum        
+    | EXPRESSION tmod EXPRESSION
+    | tvar_name
+    | tparA EXPRESSION tparC
+    | tnum
+    | tcadena
+    | tboolean
+    | tcaracter        
 ;
+

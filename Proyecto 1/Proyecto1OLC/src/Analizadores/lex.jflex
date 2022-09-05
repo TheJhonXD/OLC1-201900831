@@ -15,11 +15,11 @@ import java_cup.runtime.*;
 %unicode
 
 
-num = ([0-9]+)
-cadena = (\"[a-zA-Z]+\")
+num = ([0-9]+([.][0-9]+)?)
+cadena = (\"(.*|[^\"]+)\")
 booleano = (Falso|Verdadero)
 caracter = ('([a-zA-Z])'|'\$\{(6[5-9]|[7-8][0-9]|(90)|9[7-9]|1[0-1][0-9]|12[0-2])\}')
-sgl_cmt = (\#.+)
+sgl_cmt = (\/\/.+)
 ml_cmt = (\/\*[^*]*\*+([^\/\*][^\*]*\*+)*\/)
 var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
 
@@ -33,7 +33,7 @@ var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
     "inicio"            { return new Symbol(Simbolos.tinicio, yycolumn, yyline, yytext());      }
     "fin"               { return new Symbol(Simbolos.tfin, yycolumn, yyline, yytext());         }
 
-    "entero"            { return new Symbol(Simbolos.tint, yycolumn, yyline, yytext());         }
+    "numero"            { return new Symbol(Simbolos.tint, yycolumn, yyline, yytext());         }
     "cadena"            { return new Symbol(Simbolos.tstring, yycolumn, yyline, yytext());      }
     "Boolean"           { return new Symbol(Simbolos.tbool, yycolumn, yyline, yytext());     }
     "Caracter"          { return new Symbol(Simbolos.tchar, yycolumn, yyline, yytext());         }
@@ -61,7 +61,7 @@ var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
     "ingresar"          { return new Symbol(Simbolos.tingresar, yycolumn, yyline, yytext());    }
     "como"              { return new Symbol(Simbolos.tcomo, yycolumn, yyline, yytext());        }
     "con_valor"         { return new Symbol(Simbolos.tcon_val, yycolumn, yyline, yytext());     }
-    ","                 { return new Symbol(Simbolos.tcoma, yycolumn, yyline, yytext());       }
+    ","                 { return new Symbol(Simbolos.tcoma, yycolumn, yyline, yytext());        }
     "->"                { return new Symbol(Simbolos.tarrow, yycolumn, yyline, yytext());       }
 
     "si"                { return new Symbol(Simbolos.tif, yycolumn, yyline, yytext());          }
@@ -70,12 +70,17 @@ var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
     "de_lo_contrario"   { return new Symbol(Simbolos.telse, yycolumn, yyline, yytext());        }
     "o_si"              { return new Symbol(Simbolos.telseif, yycolumn, yyline, yytext());      }
 
+    "segun"             { return new Symbol(Simbolos.tsegun, yycolumn, yyline, yytext());       }
+    "hacer"             { return new Symbol(Simbolos.tdo, yycolumn, yyline, yytext());          }
+    "fin_segun"         { return new Symbol(Simbolos.tfin_segund, yycolumn, yyline, yytext());  }
+
+
     {num}               { return new Symbol(Simbolos.tnum, yycolumn, yyline, yytext());         }
     {cadena}            { return new Symbol(Simbolos.tcadena, yycolumn, yyline, yytext());      }
     {booleano}          { return new Symbol(Simbolos.tboolean, yycolumn, yyline, yytext());     }
     {caracter}          { return new Symbol(Simbolos.tcaracter, yycolumn, yyline, yytext());    }
-    {sgl_cmt}           { return new Symbol(Simbolos.tsgl_cmt, yycolumn, yyline, yytext());     }
-    {ml_cmt}            { return new Symbol(Simbolos.tml_cmt, yycolumn, yyline, yytext());      }
+    {sgl_cmt}           {                    /* Espacios en blanco, se ignoran */               }
+    {ml_cmt}            {                 /* Espacios en blanco, se ignoran */                  }
     {var_name}          { return new Symbol(Simbolos.tvar_name, yycolumn, yyline, yytext());    }
 
 }
