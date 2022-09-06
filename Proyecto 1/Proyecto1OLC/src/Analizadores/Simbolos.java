@@ -8,44 +8,66 @@ package Analizadores;
 /** CUP generated class containing symbol constants. */
 public class Simbolos {
   /* terminals */
+  public static final int tfin_metodo = 56;
   public static final int tvar_name = 31;
+  public static final int thasta = 47;
   public static final int telseif = 37;
   public static final int tcon_val = 29;
+  public static final int tQn_C = 45;
   public static final int tboolean = 39;
+  public static final int tQn_A = 44;
   public static final int tparC = 17;
   public static final int tparA = 16;
   public static final int tor = 24;
   public static final int tmenor_igual = 21;
+  public static final int tuntil = 53;
   public static final int tingresar = 27;
+  public static final int tfin_for = 48;
+  public static final int treturn = 54;
   public static final int tpot = 14;
   public static final int tif = 33;
   public static final int tbool = 8;
   public static final int tcadena = 38;
   public static final int tcomo = 28;
+  public static final int tparams = 57;
   public static final int tmenor = 19;
   public static final int tint = 6;
+  public static final int tfor = 46;
   public static final int tfin = 5;
   public static final int tpcoma = 3;
   public static final int tmayor = 18;
   public static final int tnot = 26;
   public static final int tarrow = 32;
   public static final int tand = 25;
+  public static final int tincrease = 49;
   public static final int tcoma = 30;
   public static final int tendif = 35;
   public static final int EOF = 0;
+  public static final int twhile = 50;
   public static final int tdiv = 12;
   public static final int error = 1;
   public static final int tnum = 2;
   public static final int tstring = 7;
+  public static final int tsegun = 41;
   public static final int tinicio = 4;
   public static final int trest = 10;
   public static final int telse = 36;
   public static final int tdifer = 23;
+  public static final int tend_while = 51;
   public static final int tmul = 13;
+  public static final int tfuncion = 58;
   public static final int tthen = 34;
   public static final int tmod = 15;
+  public static final int tprint = 61;
   public static final int tcaracter = 40;
+  public static final int tprintln = 62;
+  public static final int tdo = 42;
+  public static final int tfin_funcion = 59;
+  public static final int tfin_segun = 43;
+  public static final int texec = 60;
   public static final int tes_igual = 22;
+  public static final int tmetodo = 55;
+  public static final int trepeat = 52;
   public static final int tsum = 11;
   public static final int tmayor_igual = 20;
   public static final int tchar = 9;
@@ -90,7 +112,29 @@ public class Simbolos {
   "telseif",
   "tcadena",
   "tboolean",
-  "tcaracter"
+  "tcaracter",
+  "tsegun",
+  "tdo",
+  "tfin_segun",
+  "tQn_A",
+  "tQn_C",
+  "tfor",
+  "thasta",
+  "tfin_for",
+  "tincrease",
+  "twhile",
+  "tend_while",
+  "trepeat",
+  "tuntil",
+  "treturn",
+  "tmetodo",
+  "tfin_metodo",
+  "tparams",
+  "tfuncion",
+  "tfin_funcion",
+  "texec",
+  "tprint",
+  "tprintln"
   };
 }
 

@@ -28,6 +28,14 @@ terminal tor, tand, tnot;
 terminal tingresar, tcomo, tcon_val, tcoma, tvar_name, tarrow;
 terminal tif, tthen, tendif, telse, telseif;
 terminal tcadena, tboolean, tcaracter;
+terminal tsegun, tdo, tfin_segun, tQn_A, tQn_C;
+terminal tfor, thasta, tfin_for, tincrease;
+terminal twhile, tend_while;
+terminal trepeat, tuntil;
+terminal treturn;
+terminal tmetodo, tfin_metodo, tparams;
+terminal tfuncion, tfin_funcion;
+terminal texec, tprint, tprintln;
 
 non terminal S;
 non terminal INSTRUCTIONS, INSTRUCTION;
@@ -35,6 +43,15 @@ non terminal STATEMENT, VAR, DATATYPE;
 non terminal ASSIGNMENT;
 non terminal EXPRESSION;
 non terminal CONDITIONAL, CONDITIONALS, CONDITION, REL, OP_REL;
+non terminal SWITCH, VALOR, CASE, DEFAULT, C, OPC;
+non terminal FOR, INCREASE, INSTRUCCIONES;
+non terminal WHILE;
+non terminal REPETIR;
+non terminal RETURN;
+non terminal METODO, PARAMS, LISTPARAMS;
+non terminal FUNCION;
+non terminal EXEC, PARAMETROS;
+non terminal PRINT;
 
 precedence left tcoma;
 
@@ -64,8 +81,22 @@ INSTRUCTIONS ::= INSTRUCTIONS INSTRUCTION
 INSTRUCTION ::= STATEMENT tpcoma
     | ASSIGNMENT tpcoma
     | CONDITIONAL tendif
+    | SWITCH tfin_segun
+    | FOR tfin_for
+    | WHILE tend_while
+    | REPETIR
+    | RETURN tpcoma
+    | METODO tfin_metodo
+    | FUNCION tfin_funcion
+    | EXEC tpcoma
+    | PRINT tpcoma
     | error tpcoma
     | error tendif
+    | error tfin_segun
+    | error tfin_for
+    | error tend_while
+    | error tfin_metodo
+    | error tfin_funcion
 ;
 
 STATEMENT ::= tingresar VAR tcomo DATATYPE tcon_val EXPRESSION
@@ -126,3 +157,60 @@ EXPRESSION ::= trest EXPRESSION
     | tcaracter        
 ;
 
+SWITCH ::= tsegun EXPRESSION tdo CASE DEFAULT;
+
+CASE ::= CASE C
+    | C
+;
+
+C ::= tQn_A OPC tQn_C tthen INSTRUCTIONS;
+
+OPC ::= tnum
+    | tcaracter
+    | tcadena
+;
+
+DEFAULT ::= telse tthen INSTRUCTIONS
+    | //empty
+;
+
+FOR ::= tfor tvar_name tarrow VALOR thasta VALOR INCREASE tdo INSTRUCTIONS
+    | tfor tvar_name tarrow VALOR thasta VALOR INCREASE INSTRUCTIONS
+;
+
+INCREASE ::= tincrease tnum
+    | //empty
+;
+
+INSTRUCCIONES ::= INSTRUCTIONS
+    | //empty
+;
+
+WHILE ::= twhile CONDITION tdo INSTRUCCIONES;
+
+REPETIR ::= trepeat INSTRUCCIONES tuntil CONDITION;
+
+RETURN ::= treturn CONDITION;
+
+METODO ::= tmetodo tvar_name PARAMS INSTRUCTIONS;
+
+PARAMS ::= tparams tparA LISTPARAMS tparC INSTRUCTIONS
+    | //empty
+;
+
+LISTPARAMS ::= LISTPARAMS tcoma LISTPARAMS
+    | tvar_name DATATYPE
+;
+
+FUNCION ::= tfuncion tvar_name DATATYPE PARAMS INSTRUCTIONS RETURN;
+
+EXEC ::= texec tvar_name tparA PARAMETROS tparC;
+
+PARAMETROS ::= PARAMETROS tcoma PARAMETROS 
+    | EXPRESSION
+    | //empty
+;
+
+PRINT ::= tprint EXPRESSION
+    | tprintln EXPRESSION
+;

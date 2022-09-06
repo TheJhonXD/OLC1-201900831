@@ -35,8 +35,8 @@ var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
 
     "numero"            { return new Symbol(Simbolos.tint, yycolumn, yyline, yytext());         }
     "cadena"            { return new Symbol(Simbolos.tstring, yycolumn, yyline, yytext());      }
-    "Boolean"           { return new Symbol(Simbolos.tbool, yycolumn, yyline, yytext());     }
-    "Caracter"          { return new Symbol(Simbolos.tchar, yycolumn, yyline, yytext());         }
+    "Boolean"           { return new Symbol(Simbolos.tbool, yycolumn, yyline, yytext());        }
+    "Caracter"          { return new Symbol(Simbolos.tchar, yycolumn, yyline, yytext());        }
 
     "-"                 { return new Symbol(Simbolos.trest, yycolumn, yyline, yytext());        }
     "+"                 { return new Symbol(Simbolos.tsum, yycolumn, yyline, yytext());         }
@@ -72,7 +72,33 @@ var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
 
     "segun"             { return new Symbol(Simbolos.tsegun, yycolumn, yyline, yytext());       }
     "hacer"             { return new Symbol(Simbolos.tdo, yycolumn, yyline, yytext());          }
-    "fin_segun"         { return new Symbol(Simbolos.tfin_segund, yycolumn, yyline, yytext());  }
+    "fin_segun"         { return new Symbol(Simbolos.tfin_segun, yycolumn, yyline, yytext());   }
+    "¿"                 { return new Symbol(Simbolos.tQn_A, yycolumn, yyline, yytext());        }
+    "?"                 { return new Symbol(Simbolos.tQn_C, yycolumn, yyline, yytext());        }
+    
+    "para"              { return new Symbol(Simbolos.tfor, yycolumn, yyline, yytext());         }
+    "hasta"             { return new Symbol(Simbolos.thasta, yycolumn, yyline, yytext());       }
+    "fin_para"          { return new Symbol(Simbolos.tfin_for, yycolumn, yyline, yytext());     }
+    "con_incremental"   { return new Symbol(Simbolos.tincrease, yycolumn, yyline, yytext());    }
+
+    "mientras"          { return new Symbol(Simbolos.twhile, yycolumn, yyline, yytext());       }
+    "fin_mientras"      { return new Symbol(Simbolos.tend_while, yycolumn, yyline, yytext());   }
+
+    "repetir"           { return new Symbol(Simbolos.trepeat, yycolumn, yyline, yytext());      }
+    "hasta_que"         { return new Symbol(Simbolos.tuntil, yycolumn, yyline, yytext());       }
+
+    "retornar"          { return new Symbol(Simbolos.treturn, yycolumn, yyline, yytext());      }
+
+    "metodo"            { return new Symbol(Simbolos.tmetodo, yycolumn, yyline, yytext());      }
+    "fin_metodo"        { return new Symbol(Simbolos.tfin_metodo, yycolumn, yyline, yytext());  }
+    "con_parametros"    { return new Symbol(Simbolos.tparams, yycolumn, yyline, yytext());      }
+
+    "funcion"           { return new Symbol(Simbolos.tfuncion, yycolumn, yyline, yytext());     }
+    "fin_funcion"       { return new Symbol(Simbolos.tfin_funcion, yycolumn, yyline, yytext()); }
+
+    "ejecutar"          { return new Symbol(Simbolos.texec, yycolumn, yyline, yytext());        }
+    "impresion"         { return new Symbol(Simbolos.tprint, yycolumn, yyline, yytext());       }
+    "impresion_nl"      { return new Symbol(Simbolos.tprintln, yycolumn, yyline, yytext());     }
 
 
     {num}               { return new Symbol(Simbolos.tnum, yycolumn, yyline, yytext());         }
