@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import Analizadores.Parser;
 import Analizadores.Scanner;
+import Instrucciones.Instruction;
 
 /**
  *
@@ -233,12 +234,13 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_JSaveAsMousePressed
 
     private void jBtnRunMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtnRunMousePressed
-        try {
+        try {  
             String text = jCajaTexto.getText();
-            //System.out.println(text);
-            Scanner scanner = new Scanner(new BufferedReader(new StringReader(text)));
-            Parser parser = new Parser(scanner);
-            parser.parse();
+            Instruction instr = Instruction.getInstance();
+            instr.analize(text);
+            for (int i=0; i<instr.list.size(); i++){
+                System.out.println(instr.list.get(i).getMessage());
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

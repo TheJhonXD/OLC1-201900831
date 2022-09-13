@@ -1,5 +1,7 @@
 package Analizadores;
 import java_cup.runtime.*;
+import Errores.*;
+import Instrucciones.*;
 
 %%
 
@@ -21,8 +23,8 @@ booleano = (Falso|Verdadero)
 caracter = ('([a-zA-Z])'|'\$\{(6[5-9]|[7-8][0-9]|(90)|9[7-9]|1[0-1][0-9]|12[0-2])\}')
 sgl_cmt = (\/\/.+)
 ml_cmt = (\/\*[^*]*\*+([^\/\*][^\*]*\*+)*\/)
-var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
-
+var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9]|\_)*\_)
+letras = ([a-zA-Z])
 
 %%
 
@@ -46,6 +48,8 @@ var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
     "mod"               { return new Symbol(Simbolos.tmod, yycolumn, yyline, yytext());         }
     "("                 { return new Symbol(Simbolos.tparA, yycolumn, yyline, yytext());        }
     ")"                 { return new Symbol(Simbolos.tparC, yycolumn, yyline, yytext());        }
+    "["                 { return new Symbol(Simbolos.tcorA, yycolumn, yyline, yytext());        }
+    "]"                 { return new Symbol(Simbolos.tcorC, yycolumn, yyline, yytext());        }
 
     "mayor"             { return new Symbol(Simbolos.tmayor, yycolumn, yyline, yytext());       }
     "menor"             { return new Symbol(Simbolos.tmenor, yycolumn, yyline, yytext());       }
@@ -53,6 +57,7 @@ var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
     "menor_o_igual"     { return new Symbol(Simbolos.tmenor_igual, yycolumn, yyline, yytext()); }
     "es_igual"          { return new Symbol(Simbolos.tes_igual, yycolumn, yyline, yytext());    }
     "es_diferente"      { return new Symbol(Simbolos.tdifer, yycolumn, yyline, yytext());       }
+    "_"                 { return new Symbol(Simbolos.tunder, yycolumn, yyline, yytext());       }
 
     "or"                { return new Symbol(Simbolos.tor, yycolumn, yyline, yytext());          }
     "and"               { return new Symbol(Simbolos.tand, yycolumn, yyline, yytext());         }
@@ -97,8 +102,8 @@ var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
     "fin_funcion"       { return new Symbol(Simbolos.tfin_funcion, yycolumn, yyline, yytext()); }
 
     "ejecutar"          { return new Symbol(Simbolos.texec, yycolumn, yyline, yytext());        }
-    "impresion"         { return new Symbol(Simbolos.tprint, yycolumn, yyline, yytext());       }
-    "impresion_nl"      { return new Symbol(Simbolos.tprintln, yycolumn, yyline, yytext());     }
+    "imprimir"         { return new Symbol(Simbolos.tprint, yycolumn, yyline, yytext());       }
+    "imprimir_nl"      { return new Symbol(Simbolos.tprintln, yycolumn, yyline, yytext());     }
 
 
     {num}               { return new Symbol(Simbolos.tnum, yycolumn, yyline, yytext());         }
@@ -108,11 +113,13 @@ var_name = (\_([a-zA-Z])([a-zA-Z]|[0-9])*\_)
     {sgl_cmt}           {                    /* Espacios en blanco, se ignoran */               }
     {ml_cmt}            {                 /* Espacios en blanco, se ignoran */                  }
     {var_name}          { return new Symbol(Simbolos.tvar_name, yycolumn, yyline, yytext());    }
+    {letras}            { return new Symbol(Simbolos.tletras, yycolumn, yyline, yytext());      }
 
 }
 
-[ \t\r\n\f]       { /* Espacios en blanco, se ignoran */	}
+[ \t\r\n\f]       { /* Espacios en blanco se ignoran */	}
 
 .   {
-        System.out.println("Error Lexico: " + yytext() + " Linea " + (yyline + 1) + " Columna " + (yycolumn + 1));
+        //System.out.println("Error Lexico: " + yytext() + " Linea " + (yyline + 1) + " Columna " + (yycolumn + 1));
+        Instruction.list.addError(new Error_("Error lexico: " + yytext(), "Lexico", yyline + 1, yycolumn + 1));
     }

@@ -1,28 +1,33 @@
 package Analizadores;
 import java_cup.runtime.Symbol;
+import Errores.*;
+import Instrucciones.*;
 
 
 parser code 
 {:
     /*Method that is called when parser can be recovered*/
     public void syntax_error(Symbol s){ 
-        System.out.println("Unexpected token: " +s.value);
-        System.out.println("Error sintactico en la linea " + (s.right + 1) + " column " + (s.left + 1));
+        //System.out.println("Unexpected token: " +s.value);
+        //System.out.println("Error sintactico en la linea " + (s.right + 1) + " column " + (s.left + 1));
+        Instruction.list.addError(new Error_("Unexpected token: " + s.value, "Sintactico", s.right + 1, s.left + 1));
     }
 
     /*Method that is called when parser can't be recovered*/
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
-        System.out.println("Error sintactico unrecovered: " + s.value);
-        System.out.println("Error sintactico unrecovered en la linea " + s.right + " column " + s.left);
+        //System.out.println("Error sintactico unrecovered: " + s.value);
+        //System.out.println("Error sintactico unrecovered en la linea " + s.right + " column " + s.left);
+        Instruction.list.addError(new Error_("Error sintactico unrecovered: " + s.value, "Sintactico", s.right + 1, s.left + 1));
     } 
 :}
 
 
 terminal String tnum;
-terminal tpcoma;
+terminal String tletras;
+terminal tpcoma, tunder;
 terminal tinicio, tfin;
 terminal tint, tstring, tbool, tchar;
-terminal trest,tsum,tdiv,tmul,tpot,tmod, tparA, tparC;
+terminal trest,tsum,tdiv,tmul,tpot,tmod, tparA, tparC, tcorA, tcorC;
 terminal tmayor, tmenor, tmayor_igual, tmenor_igual, tes_igual, tdifer;
 terminal tor, tand, tnot;
 terminal tingresar, tcomo, tcon_val, tcoma, tvar_name, tarrow;
@@ -52,11 +57,12 @@ non terminal METODO, PARAMS, LISTPARAMS;
 non terminal FUNCION;
 non terminal EXEC, PARAMETROS;
 non terminal PRINT;
+non terminal INIT;
 
 precedence left tcoma;
 
-precedence nonassoc tmayor, tmenor, tmayor_igual, tmenor_igual;
-precedence nonassoc tes_igual, tdifer;
+precedence left tmayor, tmenor, tmayor_igual, tmenor_igual;
+precedence left tes_igual, tdifer;
 
 precedence left tand, tor;
 precedence right tnot;
@@ -64,14 +70,18 @@ precedence left tsum, trest;
 precedence left tdiv, tmul;
 precedence left tmod, tpot;
 precedence left tparA, tparC;
+precedence left tcorA, tcorC;
 
 
 
 start with S;
 
-S ::= tinicio INSTRUCTIONS tfin
+S ::= INIT
+;
+
+INIT ::= tinicio INSTRUCTIONS tfin
     | tinicio tfin
-    | error tfin
+    | error
 ;
 
 INSTRUCTIONS ::= INSTRUCTIONS INSTRUCTION
@@ -79,13 +89,14 @@ INSTRUCTIONS ::= INSTRUCTIONS INSTRUCTION
 ;
 
 INSTRUCTION ::= STATEMENT tpcoma
+    | STATEMENT:a {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, -1)); :}
     | ASSIGNMENT tpcoma
+    | ASSIGNMENT {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, -1)); :}
     | CONDITIONAL tendif
     | SWITCH tfin_segun
     | FOR tfin_for
     | WHILE tend_while
     | REPETIR
-    | RETURN tpcoma
     | METODO tfin_metodo
     | FUNCION tfin_funcion
     | EXEC tpcoma
@@ -99,7 +110,7 @@ INSTRUCTION ::= STATEMENT tpcoma
     | error tfin_funcion
 ;
 
-STATEMENT ::= tingresar VAR tcomo DATATYPE tcon_val EXPRESSION
+STATEMENT ::= tingresar VAR tcomo DATATYPE tcon_val REL
 ;
 
 VAR ::= VAR tcoma VAR
@@ -112,7 +123,7 @@ DATATYPE ::= tint
     | tchar
 ;
 
-ASSIGNMENT ::= VAR tarrow EXPRESSION;
+ASSIGNMENT ::= VAR tarrow REL;
 
 
 CONDITIONAL ::= tif CONDITION tthen INSTRUCTIONS
@@ -127,6 +138,7 @@ CONDITIONALS ::= CONDITIONALS telseif CONDITION tthen INSTRUCTIONS
 CONDITION ::= CONDITION tor CONDITION
     | CONDITION tand CONDITION
     | tnot CONDITION
+    | tparA CONDITION tparC
     | REL
 ;
 
@@ -147,10 +159,10 @@ EXPRESSION ::= trest EXPRESSION
     | EXPRESSION trest EXPRESSION
     | EXPRESSION tdiv EXPRESSION 
     | EXPRESSION tmul EXPRESSION 
-    | EXPRESSION tpot EXPRESSION  
+    | EXPRESSION tpot tcorA EXPRESSION tcorC 
     | EXPRESSION tmod EXPRESSION
-    | tvar_name
     | tparA EXPRESSION tparC
+    | tvar_name
     | tnum
     | tcadena
     | tboolean
@@ -178,7 +190,7 @@ FOR ::= tfor tvar_name tarrow VALOR thasta VALOR INCREASE tdo INSTRUCTIONS
     | tfor tvar_name tarrow VALOR thasta VALOR INCREASE INSTRUCTIONS
 ;
 
-INCREASE ::= tincrease tnum
+INCREASE ::= tincrease EXPRESSION
     | //empty
 ;
 
@@ -190,11 +202,11 @@ WHILE ::= twhile CONDITION tdo INSTRUCCIONES;
 
 REPETIR ::= trepeat INSTRUCCIONES tuntil CONDITION;
 
-RETURN ::= treturn CONDITION;
+RETURN ::= treturn CONDITION tpcoma;
 
 METODO ::= tmetodo tvar_name PARAMS INSTRUCTIONS;
 
-PARAMS ::= tparams tparA LISTPARAMS tparC INSTRUCTIONS
+PARAMS ::= tparams tparA LISTPARAMS tparC
     | //empty
 ;
 
@@ -211,6 +223,8 @@ PARAMETROS ::= PARAMETROS tcoma PARAMETROS
     | //empty
 ;
 
-PRINT ::= tprint EXPRESSION
-    | tprintln EXPRESSION
+PRINT ::= tprint REL
+    | tprint EXEC
+    | tprintln REL
+    | tprintln EXEC
 ;
