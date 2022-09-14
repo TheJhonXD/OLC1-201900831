@@ -5,6 +5,7 @@
 package Instrucciones;
 
 import Errores.ListaError;
+import AST.Nodo;
 import Analizadores.Parser;
 import Analizadores.Scanner;
 import java.io.BufferedReader;
@@ -16,6 +17,7 @@ import java.io.StringReader;
  */
 public class Instruction {
     public static ListaError list;
+    // public static Nodo ast;
     public static Instruction instr;
 
     private Instruction(){
@@ -38,6 +40,7 @@ public class Instruction {
         if (instr == null){
             instr = new Instruction();
             list = new ListaError();
+            // ast = new Nodo("inicio");
         }
         return instr;
     }

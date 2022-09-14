@@ -2,10 +2,16 @@ package Analizadores;
 import java_cup.runtime.Symbol;
 import Errores.*;
 import Instrucciones.*;
+import AST.*;
 
 
 parser code 
 {:
+
+    public String resultado = "";
+    public Nodo padre;
+    public int cont = 1;
+
     /*Method that is called when parser can be recovered*/
     public void syntax_error(Symbol s){ 
         //System.out.println("Unexpected token: " +s.value);
@@ -76,22 +82,39 @@ precedence left tcorA, tcorC;
 
 start with S;
 
-S ::= INIT
-;
-
-INIT ::= tinicio INSTRUCTIONS tfin
+S ::= tinicio INSTRUCTIONS:s tfin {: 
+        Nodo n = new Nodo("inicio");
+        n.addHijo((Nodo) s);
+        n.setIdNodo(parser.cont++);
+        parser.padre = n;
+        RESULT = n;
+    :}
     | tinicio tfin
     | error
 ;
 
-INSTRUCTIONS ::= INSTRUCTIONS INSTRUCTION
-    | INSTRUCTION
+INSTRUCTIONS ::= INSTRUCTIONS:ins1 INSTRUCTION:ins2 {: 
+        Nodo n = new Nodo("Instrucciones");
+        n.addHijo((Nodo) ins1);
+        n.addHijo((Nodo) ins2);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | INSTRUCTION:ins {:
+        RESULT = ins;
+    :}
 ;
 
-INSTRUCTION ::= STATEMENT tpcoma
+INSTRUCTION ::= STATEMENT:s tpcoma {:
+        Nodo n = new Nodo("Instruccion");
+        n.addHijo((Nodo) s);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+
+    :}
     | STATEMENT:a {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, -1)); :}
     | ASSIGNMENT tpcoma
-    | ASSIGNMENT {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, -1)); :}
+    | ASSIGNMENT:a {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, -1)); :}
     | CONDITIONAL tendif
     | SWITCH tfin_segun
     | FOR tfin_for
@@ -110,17 +133,62 @@ INSTRUCTION ::= STATEMENT tpcoma
     | error tfin_funcion
 ;
 
-STATEMENT ::= tingresar VAR tcomo DATATYPE tcon_val REL
+STATEMENT ::= tingresar VAR:v tcomo DATATYPE:d tcon_val REL:r {:
+        Nodo n = new Nodo("Declaracion");
+        Nodo n2 = new Nodo("ingresar");
+        n2.setValor("ingresar");
+        n2.setIdNodo(parser.cont++);
+        n.addHijo(n2);
+        n.addHijo((Nodo) v);
+        n.addHijo((Nodo) d);
+        n.addHijo((Nodo) r);
+        n.setIdNodo(parser.cont++);
+        RESULT =  n;
+    :}
 ;
 
-VAR ::= VAR tcoma VAR
-    | tvar_name
+VAR ::= VAR:a tcoma VAR:b {:
+        Nodo n = new Nodo("Var");
+        Nodo n2 = new Nodo("coma");
+        n2.setValor(";");
+        n2.setIdNodo(parser.cont++);
+        n.addHijo((Nodo) a);
+        n.addHijo((Nodo) b);
+        n.setIdNodo(parser.cont++);
+        RESULT =  n;
+    :}
+    | tvar_name:a {:
+        Nodo aux = new Nodo("id");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
 ;
 
-DATATYPE ::= tint
-    | tstring
-    | tbool
-    | tchar
+DATATYPE ::= tint:a {:
+        Nodo aux = new Nodo("type");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tstring:a {:
+        Nodo aux = new Nodo("type");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tbool:a {:
+        Nodo aux = new Nodo("type");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tchar:a {:
+        Nodo aux = new Nodo("type");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
 ;
 
 ASSIGNMENT ::= VAR tarrow REL;
@@ -142,31 +210,177 @@ CONDITION ::= CONDITION tor CONDITION
     | REL
 ;
 
-REL ::= EXPRESSION OP_REL EXPRESSION
-    | EXPRESSION
+REL ::= EXPRESSION:a OP_REL:c EXPRESSION:b {:
+        Nodo n = new Nodo("Rel");
+        n.addHijo((Nodo) a);
+        n.addHijo((Nodo) c);
+        n.addHijo((Nodo) b);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | EXPRESSION:a {:
+        RESULT = a;
+    :}
 ;
 
-OP_REL ::= tmayor
-    | tmenor
-    | tmayor_igual
-    | tmenor_igual
-    | tes_igual
-    | tdifer
+OP_REL ::= tmayor:a {:
+        Nodo aux = new Nodo("Op Relacional");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tmenor:a {:
+        Nodo aux = new Nodo("Op Relacional");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tmayor_igual:a {:
+        Nodo aux = new Nodo("Op Relacional");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tmenor_igual:a {:
+        Nodo aux = new Nodo("Op Relacional");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tes_igual:a {:
+        Nodo aux = new Nodo("Op Relacional");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tdifer:a {:
+        Nodo aux = new Nodo("Op Relacional");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
 ;
 
-EXPRESSION ::= trest EXPRESSION
-    | EXPRESSION tsum EXPRESSION 
-    | EXPRESSION trest EXPRESSION
-    | EXPRESSION tdiv EXPRESSION 
-    | EXPRESSION tmul EXPRESSION 
-    | EXPRESSION tpot tcorA EXPRESSION tcorC 
-    | EXPRESSION tmod EXPRESSION
-    | tparA EXPRESSION tparC
-    | tvar_name
-    | tnum
-    | tcadena
-    | tboolean
-    | tcaracter        
+EXPRESSION ::= trest:s EXPRESSION:a {:
+        Nodo n = new Nodo("Expresion");
+        Nodo n2 = new Nodo("Operador");
+        n2.setValor(s.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo(n2);
+        n.addHijo((Nodo) a);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | EXPRESSION:a tsum:s EXPRESSION:b {:
+        Nodo n = new Nodo("Expresion");
+        Nodo n2 = new Nodo("Operador");
+        n2.setValor(s.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo((Nodo) a);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | EXPRESSION:a trest:s EXPRESSION:b {:
+        Nodo n = new Nodo("Expresion");
+        Nodo n2 = new Nodo("Operador");
+        n2.setValor(s.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo((Nodo) a);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | EXPRESSION:a tdiv:s EXPRESSION:b {:
+        Nodo n = new Nodo("Expresion");
+        Nodo n2 = new Nodo("Operador");
+        n2.setValor(s.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo((Nodo) a);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | EXPRESSION:a tmul:s EXPRESSION:b {:
+        Nodo n = new Nodo("Expresion");
+        Nodo n2 = new Nodo("Operador");
+        n2.setValor(s.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo((Nodo) a);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | EXPRESSION:a tpot:s tcorA EXPRESSION:b tcorC {:
+        Nodo n = new Nodo("Expresion");
+        Nodo n2 = new Nodo("Operador");
+        n2.setValor(s.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo((Nodo) a);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | EXPRESSION:a tmod:s EXPRESSION:b {:
+        Nodo n = new Nodo("Expresion");
+        Nodo n2 = new Nodo("Operador");
+        n2.setValor(s.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo((Nodo) a);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | tparA:s1 EXPRESSION:a tparC:s2 {:
+        Nodo n = new Nodo("Expresion");
+        Nodo n2 = new Nodo("Parentesis");
+        Nodo n3 = new Nodo("Parentesis");
+        n2.setValor(s1.toString());
+        n2.setIdNodo(parser.cont++);
+        n3.setValor(s2.toString());
+        n3.setIdNodo(parser.cont++);
+        n.addHijo(n2);
+        n.addHijo((Nodo) a);
+        n.addHijo(n3);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | tvar_name:a {:
+        Nodo aux = new Nodo("Expresion");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tnum:a {:
+        Nodo aux = new Nodo("Expresion");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tcadena:a {:
+        Nodo aux = new Nodo("Expresion");
+        aux.setValor(a.toString().replaceAll("\"", ""));
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tboolean:a {:
+        Nodo aux = new Nodo("Expresion");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}
+    | tcaracter:a {:
+        Nodo aux = new Nodo("Expresion");
+        aux.setValor(a.toString());
+        aux.setIdNodo(parser.cont++);
+        RESULT = aux;
+    :}       
 ;
 
 SWITCH ::= tsegun EXPRESSION tdo CASE DEFAULT;
