@@ -9,14 +9,13 @@ parser code
 {:
 
     public String resultado = "";
-    public Nodo padre;
     public int cont = 1;
 
     /*Method that is called when parser can be recovered*/
     public void syntax_error(Symbol s){ 
         //System.out.println("Unexpected token: " +s.value);
         //System.out.println("Error sintactico en la linea " + (s.right + 1) + " column " + (s.left + 1));
-        Instruction.list.addError(new Error_("Unexpected token: " + s.value, "Sintactico", s.right + 1, s.left + 1));
+        Instruction.list.addError(new Error_("Error sintactico: " + s.value, "Sintactico", s.right + 1, s.left + 1));
     }
 
     /*Method that is called when parser can't be recovered*/
@@ -82,12 +81,17 @@ precedence left tcorA, tcorC;
 
 start with S;
 
-S ::= tinicio INSTRUCTIONS:s tfin {: 
-        Nodo n = new Nodo("inicio");
-        n.addHijo((Nodo) s);
+S ::= tinicio INSTRUCTIONS:s tfin {:
+        Nodo n = new Nodo("tinicio");
+        Nodo n2 = new Nodo("tfin");
+        n.setValor("inicio");
         n.setIdNodo(parser.cont++);
-        parser.padre = n;
-        RESULT = n;
+        n2.setValor("fin");
+        n2.setIdNodo(parser.cont++);
+        Instruction.ast.addHijo(n);
+        Instruction.ast.addHijo((Nodo) s);
+        Instruction.ast.addHijo(n2);
+        Instruction.ast.setIdNodo(parser.cont++);
     :}
     | tinicio tfin
     | error
@@ -107,23 +111,123 @@ INSTRUCTIONS ::= INSTRUCTIONS:ins1 INSTRUCTION:ins2 {:
 
 INSTRUCTION ::= STATEMENT:s tpcoma {:
         Nodo n = new Nodo("Instruccion");
-        n.addHijo((Nodo) s);
+        Nodo n2 = new Nodo("tpcoma");
+        n2.setValor(";");
+        n2.setIdNodo(parser.cont++);
+        Nodo aux = (Nodo) s;
+        aux.addHijo(n2);
+        n.addHijo((Nodo) aux);
         n.setIdNodo(parser.cont++);
         RESULT = n;
 
     :}
     | STATEMENT:a {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, -1)); :}
-    | ASSIGNMENT tpcoma
+    | ASSIGNMENT:s tpcoma {:
+        Nodo n = new Nodo("Instruccion");
+        Nodo n2 = new Nodo("tpcoma");
+        n2.setValor(";");
+        n2.setIdNodo(parser.cont++);
+        Nodo aux = (Nodo) s;
+        aux.addHijo(n2);
+        n.addHijo((Nodo) aux);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
     | ASSIGNMENT:a {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, -1)); :}
-    | CONDITIONAL tendif
-    | SWITCH tfin_segun
-    | FOR tfin_for
-    | WHILE tend_while
-    | REPETIR
-    | METODO tfin_metodo
-    | FUNCION tfin_funcion
-    | EXEC tpcoma
-    | PRINT tpcoma
+    | CONDITIONAL:s tendif:a {:
+        Nodo n = new Nodo("Instruccion");
+        Nodo n2 = new Nodo("tendif");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        Nodo aux = (Nodo) s;
+        aux.addHijo(n2);
+        n.addHijo((Nodo) aux);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | SWITCH:s tfin_segun:a {:
+        Nodo n = new Nodo("Instruccion");
+        Nodo n2 = new Nodo("tfin_segun");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        Nodo aux = (Nodo) s;
+        aux.addHijo(n2);
+        n.addHijo((Nodo) aux);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | FOR:s tfin_for:a {:
+        Nodo n = new Nodo("Instruccion");
+        Nodo n2 = new Nodo("tfin_segun");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        Nodo aux = (Nodo) s;
+        aux.addHijo(n2);
+        n.addHijo((Nodo) aux);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | WHILE:s tend_while:a {:
+        Nodo n = new Nodo("Instruccion");
+        Nodo n2 = new Nodo("tend_while");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        Nodo aux = (Nodo) s;
+        aux.addHijo(n2);
+        n.addHijo((Nodo) aux);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | REPETIR:s {:
+        Nodo n = new Nodo("Instruccion");
+        n.addHijo((Nodo) s);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | METODO:s tfin_metodo:a {:
+        Nodo n = new Nodo("Instruccion");
+        Nodo n2 = new Nodo("tfin_metodo");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        Nodo aux = (Nodo) s;
+        aux.addHijo(n2);
+        n.addHijo((Nodo) aux);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | FUNCION:s tfin_funcion:a {:
+        Nodo n = new Nodo("Instruccion");
+        Nodo n2 = new Nodo("tfin_funcion");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        Nodo aux = (Nodo) s;
+        aux.addHijo(n2);
+        n.addHijo((Nodo) aux);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | EXEC:s tpcoma:a {:
+        Nodo n = new Nodo("Instruccion");
+        Nodo n2 = new Nodo("tpcoma");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        Nodo aux = (Nodo) s;
+        aux.addHijo(n2);
+        n.addHijo((Nodo) aux);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | PRINT:s tpcoma:a {:
+        Nodo n = new Nodo("Instruccion");
+        Nodo n2 = new Nodo("tpcoma");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        Nodo aux = (Nodo) s;
+        aux.addHijo(n2);
+        n.addHijo((Nodo) aux);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
     | error tpcoma
     | error tendif
     | error tfin_segun
@@ -191,23 +295,145 @@ DATATYPE ::= tint:a {:
     :}
 ;
 
-ASSIGNMENT ::= VAR tarrow REL;
-
-
-CONDITIONAL ::= tif CONDITION tthen INSTRUCTIONS
-    | tif CONDITION INSTRUCTIONS telse INSTRUCTIONS
-    | tif CONDITION CONDITIONALS
+ASSIGNMENT ::= VAR:a tarrow:x REL:b {:
+        Nodo n = new Nodo("Asignacion");
+        Nodo n2 = new Nodo("tarrow");
+        n2.setValor(x.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo((Nodo) a);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
 ;
 
-CONDITIONALS ::= CONDITIONALS telseif CONDITION tthen INSTRUCTIONS
-    | telse INSTRUCTIONS
+
+CONDITIONAL ::= tif:a CONDITION:b tthen:c INSTRUCTIONS:d {:
+        Nodo n = new Nodo("Condicional");
+        Nodo n2 = new Nodo("tif");
+        Nodo n3 = new Nodo("tthen");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        n3.setValor(c.toString());
+        n3.setIdNodo(parser.cont++);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.addHijo(n3);
+        n.addHijo((Nodo) d);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | tif:a CONDITION:b tthen:c INSTRUCTIONS:d telse:e INSTRUCTIONS:f {:    
+        Nodo n = new Nodo("Condicional");
+        Nodo n2 = new Nodo("tif");
+        Nodo n3 = new Nodo("tthen");
+        Nodo n4 = new Nodo("telse");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        n3.setValor(c.toString());
+        n3.setIdNodo(parser.cont++);
+        n4.setValor(e.toString());
+        n4.setIdNodo(parser.cont++);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.addHijo(n3);
+        n.addHijo((Nodo) d);
+        n.addHijo(n4);
+        n.addHijo((Nodo) f);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | tif:a CONDITION:b CONDITIONALS:c {:
+        Nodo n = new Nodo("Condicional");
+        Nodo n2 = new Nodo("tif");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.addHijo((Nodo) c);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
 ;
 
-CONDITION ::= CONDITION tor CONDITION
-    | CONDITION tand CONDITION
-    | tnot CONDITION
-    | tparA CONDITION tparC
-    | REL
+CONDITIONALS ::= CONDITIONALS:a telseif:b CONDITION:c tthen:d INSTRUCTIONS:e {:
+        Nodo n = new Nodo("Condicionales");
+        Nodo n2 = new Nodo("telseif");
+        Nodo n3 = new Nodo("tthen");
+        n2.setValor(b.toString());
+        n2.setIdNodo(parser.cont++);
+        n3.setValor(d.toString());
+        n3.setIdNodo(parser.cont++);
+        n.addHijo((Nodo) a);
+        n.addHijo(n2);
+        n.addHijo((Nodo) c);
+        n.addHijo(n3);
+        n.addHijo((Nodo) e);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | telse:a INSTRUCTIONS:b {:
+        Nodo n = new Nodo("Condicionales");
+        Nodo n2 = new Nodo("telse");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+;
+
+CONDITION ::= CONDITION:a tor:b CONDITION:c {:
+        Nodo n = new Nodo("Condicion");
+        Nodo n2 = new Nodo("tor");
+        n2.setValor(b.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo((Nodo) a);
+        n.addHijo(n2);
+        n.addHijo((Nodo) c);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | CONDITION:a tand:b CONDITION:c {:
+        Nodo n = new Nodo("Condicion");
+        Nodo n2 = new Nodo("tand");
+        n2.setValor(b.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo((Nodo) a);
+        n.addHijo(n2);
+        n.addHijo((Nodo) c);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | tnot:a CONDITION:b {:
+        Nodo n = new Nodo("Condicion");
+        Nodo n2 = new Nodo("tnot");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | tparA:a CONDITION:b tparC:c {:
+        Nodo n = new Nodo("Condicion");
+        Nodo n2 = new Nodo("tparA");
+        Nodo n3 = new Nodo("tparC");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        n2.setValor(c.toString());
+        n2.setIdNodo(parser.cont++);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.addHijo(n3);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | REL:n {:
+        RESULT = n;
+    :}
 ;
 
 REL ::= EXPRESSION:a OP_REL:c EXPRESSION:b {:
@@ -315,14 +541,22 @@ EXPRESSION ::= trest:s EXPRESSION:a {:
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
-    | EXPRESSION:a tpot:s tcorA EXPRESSION:b tcorC {:
+    | EXPRESSION:a tpot:s tcorA:c EXPRESSION:b tcorC:d {:
         Nodo n = new Nodo("Expresion");
-        Nodo n2 = new Nodo("Operador");
+        Nodo n2 = new Nodo("tpot");
+        Nodo n3 = new Nodo("tcorA");
+        Nodo n4 = new Nodo("tcorC");
         n2.setValor(s.toString());
         n2.setIdNodo(parser.cont++);
+        n3.setValor(c.toString());
+        n3.setIdNodo(parser.cont++);
+        n4.setValor(d.toString());
+        n4.setIdNodo(parser.cont++);
         n.addHijo((Nodo) a);
         n.addHijo(n2);
+        n.addHijo(n3);
         n.addHijo((Nodo) b);
+        n.addHijo(n4);
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
@@ -352,31 +586,31 @@ EXPRESSION ::= trest:s EXPRESSION:a {:
         RESULT = n;
     :}
     | tvar_name:a {:
-        Nodo aux = new Nodo("Expresion");
+        Nodo aux = new Nodo("tvar_name");
         aux.setValor(a.toString());
         aux.setIdNodo(parser.cont++);
         RESULT = aux;
     :}
     | tnum:a {:
-        Nodo aux = new Nodo("Expresion");
+        Nodo aux = new Nodo("tnum");
         aux.setValor(a.toString());
         aux.setIdNodo(parser.cont++);
         RESULT = aux;
     :}
     | tcadena:a {:
-        Nodo aux = new Nodo("Expresion");
+        Nodo aux = new Nodo("tcadena");
         aux.setValor(a.toString().replaceAll("\"", ""));
         aux.setIdNodo(parser.cont++);
         RESULT = aux;
     :}
     | tboolean:a {:
-        Nodo aux = new Nodo("Expresion");
+        Nodo aux = new Nodo("tboolean");
         aux.setValor(a.toString());
         aux.setIdNodo(parser.cont++);
         RESULT = aux;
     :}
     | tcaracter:a {:
-        Nodo aux = new Nodo("Expresion");
+        Nodo aux = new Nodo("tcaracter");
         aux.setValor(a.toString());
         aux.setIdNodo(parser.cont++);
         RESULT = aux;

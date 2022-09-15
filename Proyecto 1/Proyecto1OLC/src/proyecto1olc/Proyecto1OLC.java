@@ -4,6 +4,8 @@
  */
 package proyecto1olc;
 
+import Interfaz.Interface;
+
 /**
  *
  * @author TheJhonX
@@ -14,7 +16,8 @@ public class Proyecto1OLC {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        Interface nuevo = new Interface();
+        nuevo.setVisible(true);
     }
     
 }

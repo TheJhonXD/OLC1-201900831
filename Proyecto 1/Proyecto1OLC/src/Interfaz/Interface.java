@@ -241,6 +241,9 @@ public class Interface extends javax.swing.JFrame {
             for (int i=0; i<instr.list.size(); i++){
                 System.out.println(instr.list.get(i).getMessage());
             }
+            System.out.println("--------------------------------");
+            instr.createASTGraph(instr.ast);
+            System.out.println("--------------------------------");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
