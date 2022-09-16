@@ -29,7 +29,7 @@ public class Instruction {
     public void analize(String text){
         try {
             list = new ListaError();
-            ast = new Nodo("inicio");
+            ast = new Nodo("global");
             Scanner scanner = new Scanner(new BufferedReader(new StringReader(text)));
             Parser parser = new Parser(scanner);
             parser.parse();
@@ -43,7 +43,7 @@ public class Instruction {
         if (instr == null){
             instr = new Instruction();
             list = new ListaError();
-            ast = new Nodo("inicio");
+            ast = new Nodo("global");
         }
         return instr;
     }
@@ -60,11 +60,11 @@ public class Instruction {
         StringBuilder graph = new StringBuilder();
         if (nodo != null){
             for (int i=0; i<nodo.getHijos().size(); i++){
-                graph.append("\t").append("n" + nodo.getHijos().get(i).getIdNodo()).append("[label=\"" + nodo.getHijos().get(i).getNombre() + "\"];\n");
+                graph.append("\t").append("n" + nodo.getHijos().get(i).getIdNodo()).append("[label=\"" + nodo.getHijos().get(i).getNombre() + " = " + nodo.getHijos().get(i).getValor() + "\"];\n");
                 graph.append(getGraphNodo(nodo.getHijos().get(i)));
                 graph.append("\t").append("n" + nodo.getIdNodo()).append("->" + "n" + nodo.getHijos().get(i).getIdNodo()).append(";\n");
             }
-
+            System.out.println(nodo.getNombre());
         }
         return graph.toString();
     }
@@ -86,9 +86,13 @@ public class Instruction {
 
     public void createASTGraph(Nodo nodo){
         try {
-            FileWriter f = new FileWriter("C:\\Users\\TheJhonX\\Desktop\\AST\\ast.dot");
+            String path = "C:\\Users\\TheJhonX\\Desktop\\AST\\";
+            FileWriter f = new FileWriter(path + "ast.dot");
             f.write(getDot(nodo));
             f.close();
+            String[] cmd = {"dot", "-Tsvg", path + "ast.dot", "-o", path + "grafo.svg"};
+            Runtime rt = Runtime.getRuntime();
+            rt.exec(cmd);
         } catch (IOException e) {
             System.out.println("Ocurrió un error");
             System.out.println(e.getMessage());
