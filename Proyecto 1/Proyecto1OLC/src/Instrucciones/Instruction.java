@@ -64,7 +64,7 @@ public class Instruction {
                 graph.append(getGraphNodo(nodo.getHijos().get(i)));
                 graph.append("\t").append("n" + nodo.getIdNodo()).append("->" + "n" + nodo.getHijos().get(i).getIdNodo()).append(";\n");
             }
-            System.out.println(nodo.getNombre());
+            //System.out.println(nodo.getNombre());
         }
         return graph.toString();
     }

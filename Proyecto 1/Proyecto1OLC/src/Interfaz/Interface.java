@@ -17,6 +17,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import Analizadores.Parser;
 import Analizadores.Scanner;
 import Instrucciones.Instruction;
+import AST.Python;
 
 /**
  *
@@ -243,6 +244,12 @@ public class Interface extends javax.swing.JFrame {
             }
             System.out.println("--------------------------------");
             instr.createASTGraph(instr.ast);
+            System.out.println("AST creado");
+            System.out.println("--------------------------------");
+            Python p = new Python();
+            String codePy = p.GLOBAL(instr.ast);
+            p.createPyFile(codePy);
+            System.out.println("Archivo.py creado");
             System.out.println("--------------------------------");
         } catch (Exception e) {
             System.out.println(e.getMessage());
