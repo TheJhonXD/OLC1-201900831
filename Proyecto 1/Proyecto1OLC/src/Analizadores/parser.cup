@@ -170,7 +170,7 @@ INSTRUCTION ::= STATEMENT:s tpcoma {:
     :}
     | FOR:s tfin_for:a {:
         Nodo n = new Nodo("Instruction");
-        Nodo n2 = new Nodo("tfin_segun");
+        Nodo n2 = new Nodo("tfin_for");
         n2.setValor(a.toString());
         n2.setIdNodo(parser.cont++);
         Nodo aux = (Nodo) s;
@@ -664,7 +664,7 @@ EXPRESSION ::= trest:s EXPRESSION:a {:
     :}       
 ;
 
-SWITCH ::= tsegun:a REL:b tdo:c CASE:d DEFAULT:e {:
+SWITCH ::= tsegun:a EXPRESSION:b tdo:c CASE:d DEFAULT:e {:
         Nodo n = new Nodo("Switch");
         Nodo n2 = new Nodo("tsegun");
         Nodo n3 = new Nodo("tdo");
@@ -756,7 +756,7 @@ DEFAULT ::= telse:a tthen:b INSTRUCTIONS:c {:
     | //empty
 ;
 
-FOR ::= tfor:a tvar_name:b tarrow:c VALOR:d thasta:e VALOR:f INCREASE:g tdo:h INSTRUCTIONS:j {:
+FOR ::= tfor:a tvar_name:b tarrow:c EXPRESSION:d thasta:e EXPRESSION:f INCREASE:g tdo:h INSTRUCCIONES:j {:
         Nodo n = new Nodo("For");
         Nodo n2 = new Nodo("tfor");
         Nodo n3 = new Nodo("tvar_name");
