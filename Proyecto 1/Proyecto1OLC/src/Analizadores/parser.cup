@@ -108,7 +108,7 @@ S ::= tinicio INSTRUCTIONS:s tfin {:
 INSTRUCTIONS ::= INSTRUCTIONS:ins1 INSTRUCTION:ins2 {:
         // RESULT = new ArrayList<Nodo>();
         ArrayList<Nodo> aux = new ArrayList<Nodo>();
-        System.out.println("ins1.get(i).getNombre()");
+        // System.out.println("ins1.get(i).getNombre()");
         for (int i=0; i<ins1.size(); i++){
             aux.add(ins1.get(i));
         }
@@ -402,6 +402,7 @@ CONDITIONALS ::= CONDITIONALS:a telseif:b CONDITION:c tthen:d INSTRUCTIONS:e {:
         Nodo n2 = new Nodo("telseif");
         Nodo n3 = new Nodo("tthen");
         n2.setValor(b.toString());
+        //TODO: Arreglar problema con condicional multiple
         n2.setIdNodo(parser.cont++);
         n3.setValor(d.toString());
         n3.setIdNodo(parser.cont++);
@@ -781,9 +782,7 @@ FOR ::= tfor:a tvar_name:b tarrow:c EXPRESSION:d thasta:e EXPRESSION:f INCREASE:
         n.addHijo((Nodo) f);
         n.addHijo((Nodo) g);
         n.addHijo(n6);
-        for (int i=0; i<j.size(); i++){
-            n.addHijo(j.get(i));
-        }
+        n.addHijo((Nodo) j);
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}

@@ -47,6 +47,14 @@ public class Python {
         return null;
     }
 
+    public String Tab(int cont){
+        StringBuilder tab = new StringBuilder();
+        for (int i=0; i<cont; i++){
+            tab.append("\t");
+        }
+        return tab.toString();
+    }
+
     public String EXPRESSION(Nodo nodo){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
@@ -55,7 +63,7 @@ public class Python {
                 code.append(EXPRESSION(hijos.get(i)));
             }else{
                 if (hijos.get(i).getNombre() == "tcadena"){
-                    code.append("\"").append(hijos.get(i).getValor()).append("\"");
+                    code.append("\"").append(hijos.get(i).getValor().replaceAll("\n", "")).append("\"");
                 }else if (hijos.get(i).getNombre() == "Operador"){
                     if (hijos.get(i).getValor().toLowerCase().equals("mod")){
                         code.append("%");
@@ -69,6 +77,10 @@ public class Python {
                     aux = aux.replaceFirst("_", "");
                     aux = replaceLast("_", "", aux);
                     code.append(aux);
+                }else if (hijos.get(i).getNombre() == "tcorA"){
+                    code.append("(");
+                }else if (hijos.get(i).getNombre() == "tcorC"){
+                    code.append(")");
                 }else{
                     code.append(hijos.get(i).getValor());
                 }
@@ -107,7 +119,7 @@ public class Python {
                 code.append(OP_RELACIONAL(hijos.get(i)));
             }else{
                 if (hijos.get(i).getNombre() == "tcadena"){
-                    code.append("\"").append(hijos.get(i).getValor()).append("\"");
+                    code.append("\"").append(hijos.get(i).getValor().replaceAll("\n", "")).append("\"");
                 }else if (hijos.get(i).getNombre() == "tvar_name"){
                     String aux = hijos.get(i).getValor();
                     aux = aux.replaceFirst("_", "");
@@ -133,7 +145,7 @@ public class Python {
                 code.append(EXPRESSION(hijos.get(i)));
             }else{
                 if (hijos.get(i).getNombre() == "tcadena"){
-                    code.append("\"").append(hijos.get(i).getValor()).append("\"");
+                    code.append("\"").append(hijos.get(i).getValor().replaceAll("\n", "")).append("\"");
                 }else if (hijos.get(i).getNombre() == "tvar_name"){
                     String aux = hijos.get(i).getValor();
                     aux = aux.replaceFirst("_", "");
@@ -165,9 +177,10 @@ public class Python {
         return code.toString();
     }
 
-    public String STATEMENT(Nodo nodo){
+    public String STATEMENT(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
+        code.append(Tab(cont));
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "Rel"){
                 code.append(REL(hijos.get(i)));
@@ -192,9 +205,13 @@ public class Python {
                 }else if (hijos.get(i).getNombre() == "tnum"){
                     code.append(hijos.get(i).getValor());
                 }else if (hijos.get(i).getNombre() == "tcadena"){
-                    code.append("\"").append(hijos.get(i).getValor()).append("\"");
+                    code.append("\"").append(hijos.get(i).getValor().replaceAll("\n", "")).append("\"");
                 }else if (hijos.get(i).getNombre() == "tboolean"){
-                    code.append(hijos.get(i).getNombre().toUpperCase().charAt(0)).append(hijos.get(i).getNombre().substring(1, hijos.get(i).getNombre().length()).toLowerCase());
+                    if (hijos.get(i).getValor().toLowerCase().equals("verdadero")){
+                        code.append("True");
+                    }else{
+                        code.append("False");
+                    }
                 }else if (hijos.get(i).getNombre() == "tcaracter"){
                     code.append(hijos.get(i).getValor());
                 }else if (hijos.get(i).getNombre() == "tpcoma"){
@@ -206,13 +223,13 @@ public class Python {
         return code.toString();
     }
 
-    public String ASSIGMENT(Nodo nodo){
+    public String ASSIGMENT(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
+        code.append(Tab(cont));
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "Var"){
                 code.append(VAR(hijos.get(i)));
-                code.append(" = ");
             }else if (hijos.get(i).getNombre() == "tarrow"){
                 code.append(" = ");
             }else if (hijos.get(i).getNombre() == "Lista_valores"){
@@ -222,7 +239,7 @@ public class Python {
             }else if (hijos.get(i).getNombre() == "Expresion"){
                 code.append(EXPRESSION(hijos.get(i)));
             }else if (hijos.get(i).getNombre() == "tcadena"){
-                code.append("\"").append(hijos.get(i).getValor()).append("\"");
+                code.append("\"").append(hijos.get(i).getValor().replaceAll("\n", "")).append("\"");
             }else if (hijos.get(i).getNombre() == "id"){
                 String aux = hijos.get(i).getValor();
                 aux = aux.replaceFirst("_", "");
@@ -268,9 +285,13 @@ public class Python {
             }else if (hijos.get(i).getNombre() == "tnum"){
                 code.append(hijos.get(i).getValor());
             }else if (hijos.get(i).getNombre() == "tcadena"){
-                code.append("\"").append(hijos.get(i).getValor()).append("\"");
+                code.append("\"").append(hijos.get(i).getValor().replaceAll("\n", "")).append("\"");
             }else if (hijos.get(i).getNombre() == "tboolean"){
-                code.append(hijos.get(i).getNombre().toUpperCase().charAt(0)).append(hijos.get(i).getNombre().substring(1, hijos.get(i).getNombre().length()).toLowerCase());
+                if (hijos.get(i).getValor().toLowerCase().equals("verdadero")){
+                    code.append("True");
+                }else{
+                    code.append("False");
+                }
             }else if (hijos.get(i).getNombre() == "tcaracter"){
                 code.append(hijos.get(i).getValor());
             }
@@ -278,47 +299,52 @@ public class Python {
         return code.toString();
     }
 
-    public String CONDITIONALS(Nodo nodo){
+    public String CONDITIONALS(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "Condicionales"){
-                code.append(CONDITIONALS(hijos.get(i)));
+                code.append(CONDITIONALS(hijos.get(i), cont));
             }else if (hijos.get(i).getNombre() == "telseif"){
+                code.append(Tab(cont));
                 code.append("elif ");
             }else if (hijos.get(i).getNombre() == "tthen"){
                 code.append(":\n");
             }else if (hijos.get(i).getNombre() == "Condicion"){
                 code.append(CONDITION(hijos.get(i)));
             }else if (hijos.get(i).getNombre() == "Instructions"){
-                code.append("\t").append(INSTRUCTIONS(hijos.get(i)));
+                code.append(INSTRUCTIONS(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Instruction"){
-                code.append("\t").append(INSTRUCTION(hijos.get(i)));
+                code.append(INSTRUCTION(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "telse"){
+                code.append(Tab(cont));
                 code.append("else:\n");
             }
         }
         return code.toString();
     }
 
-    public String CONDITIONAL(Nodo nodo){
+    public String CONDITIONAL(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "tif"){
+                code.append(Tab(cont));
                 code.append("if ");
+            }else if (hijos.get(i).getNombre() == "Condicional"){
+                code.append(CONDITIONAL(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Condicion"){
                 code.append(CONDITION(hijos.get(i)));
             }else if (hijos.get(i).getNombre() == "tthen"){
                 code.append(":\n");
             }else if (hijos.get(i).getNombre() == "Instructions"){
-                code.append("\t").append(INSTRUCTIONS(hijos.get(i)));
+                code.append(INSTRUCTIONS(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Instruction"){
-                code.append("\t").append(INSTRUCTION(hijos.get(i)));
+                code.append(INSTRUCTION(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "telse"){
                 code.append("else:\n");
             }else if (hijos.get(i).getNombre() == "Condicionales"){
-                code.append(CONDITIONALS(hijos.get(i)));
+                code.append(CONDITIONALS(hijos.get(i), cont));
             }else if (hijos.get(i).getNombre() == "tendif"){
                 code.append("\n");
             }
@@ -326,60 +352,64 @@ public class Python {
         return code.toString();
     }
 
-    public String DEFAULT(Nodo nodo){
+    public String DEFAULT(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "telse"){
+                code.append(Tab(cont));
                 code.append("else");
             }else if (hijos.get(i).getNombre() == "tthen"){
                 code.append(":\n");
             }else if (hijos.get(i).getNombre() == "Instructions"){
-                code.append("\t").append(INSTRUCTIONS(hijos.get(i)));
+                code.append(INSTRUCTIONS(hijos.get(i), cont +1));
             }else if (hijos.get(i).getNombre() == "Instruction"){
-                code.append("\t").append(INSTRUCTION(hijos.get(i)));
+                code.append(INSTRUCTION(hijos.get(i), cont + 1));
             }
         }
         return code.toString();
     }
 
-    public String C(Nodo nodo, String aux){
+    public String C(Nodo nodo, String aux, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "Caso"){
-                code.append(C(hijos.get(i), aux));
+                code.append(C(hijos.get(i), aux, cont));
             }else if (hijos.get(i).getNombre() == "tnum"){
+                code.append(Tab(cont));
                 code.append("elif ").append(aux).append(" == ").append(hijos.get(i).getValor());
             }else if (hijos.get(i).getNombre() == "tcaracter"){
+                code.append(Tab(cont));
                 code.append("elif ").append(aux).append(" == ").append(hijos.get(i).getValor());
             }else if (hijos.get(i).getNombre() == "tcadena"){
-                code.append("elif ").append(aux).append(" == ").append("\"").append(hijos.get(i).getValor()).append("\"");
+                code.append(Tab(cont));
+                code.append("elif ").append(aux).append(" == ").append("\"").append(hijos.get(i).getValor().replaceAll("\n", "")).append("\"");
             }else if (hijos.get(i).getNombre() == "tthen"){
                 code.append(":\n");
             }else if (hijos.get(i).getNombre() == "Instructions"){
-                code.append("\t").append(INSTRUCTIONS(hijos.get(i)));
+                code.append(INSTRUCTIONS(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Instruction"){
-                code.append("\t").append(INSTRUCTION(hijos.get(i)));
+                code.append(INSTRUCTION(hijos.get(i), cont + 1));
             }
         }
         return code.toString();
     }
 
-    public String CASE(Nodo nodo, String aux){
+    public String CASE(Nodo nodo, String aux, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "Casos"){
-                code.append(CASE(hijos.get(i), aux));
+                code.append(CASE(hijos.get(i), aux, cont));
             }else if (hijos.get(i).getNombre() == "Caso"){
-                code.append(C(hijos.get(i), aux));
+                code.append(C(hijos.get(i), aux, cont));
             }
         }
         return code.toString();
     }
 
-    public String SWITCH(Nodo nodo){
+    public String SWITCH(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         StringBuilder aux = new StringBuilder();
@@ -387,7 +417,7 @@ public class Python {
             if (hijos.get(i).getNombre() == "tsegun"){
                 // code.append("if ");
             }else if (hijos.get(i).getNombre() == "Switch"){
-                aux.append(SWITCH(hijos.get(i)));
+                aux.append(SWITCH(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Expresion"){
                 aux.append(EXPRESSION(hijos.get(i)));
             }else if (hijos.get(i).getNombre() == "tvar_name"){
@@ -398,23 +428,27 @@ public class Python {
             }else if (hijos.get(i).getNombre() == "tnum"){
                 aux.append(hijos.get(i).getValor());
             }else if (hijos.get(i).getNombre() == "tcadena"){
-                aux.append("\"").append(hijos.get(i).getValor()).append("\"");
+                aux.append("\"").append(hijos.get(i).getValor().replaceAll("\n", "")).append("\"");
             }else if (hijos.get(i).getNombre() == "tboolean"){
-                code.append(hijos.get(i).getNombre().toUpperCase().charAt(0)).append(hijos.get(i).getNombre().substring(1, hijos.get(i).getNombre().length()).toLowerCase());
+                if (hijos.get(i).getValor().toLowerCase().equals("verdadero")){
+                    code.append("True");
+                }else{
+                    code.append("False");
+                }
             }else if (hijos.get(i).getNombre() == "tcaracter"){
                 aux.append(hijos.get(i).getValor());
                 //TODO: Comprobar si concatena parentesis
             }else if (hijos.get(i).getNombre() == "tdo"){
                 // code.append(aux.toString()).append(":\n");
             }else if (hijos.get(i).getNombre() == "Casos"){
-                code.append(CASE(hijos.get(i), aux.toString()));
+                code.append(CASE(hijos.get(i), aux.toString(), cont));
             }else if (hijos.get(i).getNombre() == "Default"){
-                code.append(DEFAULT(hijos.get(i)));
+                code.append(DEFAULT(hijos.get(i), cont));
             }else if (hijos.get(i).getNombre() == "tfin_segun"){
                 code.append("\n");
             }
         }
-        return code.toString().substring(2, code.toString().length());
+        return code.toString().replaceFirst("elif", "if");
     }
 
     public String INCREASE(Nodo nodo){
@@ -435,28 +469,29 @@ public class Python {
         return code.toString();
     }
 
-    public String INSTRUCCIONES(Nodo nodo){
+    public String INSTRUCCIONES(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "Instructions"){
-                code.append(INSTRUCTIONS(hijos.get(i)));
+                code.append(INSTRUCTIONS(hijos.get(i), cont));
             }else if (hijos.get(i).getNombre() == "Instruction"){
-                code.append(INSTRUCTION(hijos.get(i)));
+                code.append(INSTRUCTION(hijos.get(i), cont));
             }
         }
         return code.toString();
     }
 
-    public String FOR(Nodo nodo){
+    public String FOR(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         boolean flag = false;
         boolean flag2 = false;
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "For"){
-                code.append(FOR(hijos.get(i)));
+                code.append(FOR(hijos.get(i), cont + 1));
             }else if (hijos.get(i). getNombre() == "tfor"){
+                code.append(Tab(cont));
                 code.append("for ");
             }else if (hijos.get(i).getNombre() == "tvar_name"){
                 String aux2 = hijos.get(i).getValor();
@@ -475,7 +510,7 @@ public class Python {
             }else if (hijos.get(i).getNombre() == "tnum"){
                 code.append(hijos.get(i).getValor());
             }else if (hijos.get(i).getNombre() == "tdo"){
-                if (flag){
+                if (flag2){
                     code.append("):\n");
                 }else{
                     code.append(":\n");
@@ -483,7 +518,7 @@ public class Python {
             }else if (hijos.get(i).getNombre() == "Incremento"){
                 code.append(", ").append(INCREASE(hijos.get(i)));
             }else if (hijos.get(i).getNombre() == "Instrucciones"){
-                code.append("\t").append(INSTRUCCIONES(hijos.get(i)));
+                code.append(INSTRUCCIONES(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "tfin_for"){
                 code.append("\n");
             }
@@ -491,20 +526,21 @@ public class Python {
         return code.toString();
     }
 
-    public String WHILE(Nodo nodo){
+    public String WHILE(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "twhile"){
+                code.append(Tab(cont));
                 code.append("while ");
             }else if (hijos.get(i).getNombre() == "While"){
-                code.append(WHILE(hijos.get(i)));
+                code.append(WHILE(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Condicion"){
                 code.append(CONDITION(hijos.get(i)));
             }else if (hijos.get(i).getNombre() == "tdo"){
                 code.append(":\n");
             }else if (hijos.get(i).getNombre() == "Instrucciones"){
-                code.append("\t").append(INSTRUCCIONES(hijos.get(i)));
+                code.append(INSTRUCCIONES(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "tend_while"){
                 code.append("\n");
             }
@@ -512,29 +548,33 @@ public class Python {
         return code.toString();
     }
 
-    public String REPETIR(Nodo nodo){
+    public String REPETIR(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
+        code.append(Tab(cont));
         code.append("valor = true\n");
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "trepeat"){
+                code.append(cont);
                 code.append("while valor == true:");
             }else if (hijos.get(i).getNombre() == "Repetir"){
-                code.append(REPETIR(hijos.get(i)));
+                code.append(REPETIR(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Instrucciones"){
-                code.append("\t").append(INSTRUCCIONES(hijos.get(i)));
+                code.append(INSTRUCCIONES(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Condicion"){
                 code.append("if ").append(CONDITION(hijos.get(i))).append(":\n").append("\t").append("valor = false\n");
             }
         }
-        code.append("\t").append("if valor == false:\n").append("\t").append("break");
+        code.append(Tab(cont));
+        code.append("if valor == false:\n").append(Tab(cont)).append("break");
         code.append("\n");
         return code.toString();
     }
 
-    public String RETURN(Nodo nodo){
+    public String RETURN(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
+        code.append(Tab(cont));
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "treturn"){
                 code.append("return ");
@@ -587,11 +627,12 @@ public class Python {
         return code.toString();
     }
 
-    public String METODO(Nodo nodo){
+    public String METODO(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "tmetodo"){
+                code.append(Tab(cont));
                 code.append("def ");
             }else if (hijos.get(i).getNombre() == "tvar_name"){
                 String aux2 = hijos.get(i).getValor();
@@ -601,9 +642,9 @@ public class Python {
             }else if (hijos.get(i).getNombre() == "Parametros"){
                 code.append(PARAMS(hijos.get(i)));
             }else if (hijos.get(i).getNombre() == "Instructions"){
-                code.append("):\n").append("\t").append(INSTRUCTIONS(hijos.get(i)));
+                code.append(INSTRUCTIONS(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Instruction"){
-                code.append("):\n").append("\t").append(INSTRUCTION(hijos.get(i)));
+                code.append(INSTRUCTION(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "tfin_metodo"){
                 code.append("\n");
             }
@@ -611,11 +652,12 @@ public class Python {
         return code.toString();
     }
 
-    public String FUNCION(Nodo nodo){
+    public String FUNCION(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "tfuncion"){
+                code.append(Tab(cont));
                 code.append("def ");
             }else if (hijos.get(i).getNombre() == "tvar_name"){
                 String aux2 = hijos.get(i).getValor();
@@ -625,11 +667,11 @@ public class Python {
             }else if (hijos.get(i).getNombre() == "Parametros"){
                 code.append(PARAMS(hijos.get(i)));
             }else if (hijos.get(i).getNombre() == "Instructions"){
-                code.append("):\n").append("\t").append(INSTRUCTIONS(hijos.get(i)));
+                code.append(INSTRUCTIONS(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Instruction"){
-                code.append("):\n").append("\t").append(INSTRUCTION(hijos.get(i)));
+                code.append(INSTRUCTION(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Return"){
-                code.append(RETURN(hijos.get(i)));
+                code.append(RETURN(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "tfin_funcion"){
                 code.append("\n");
             }
@@ -653,9 +695,13 @@ public class Python {
             }else if (hijos.get(i).getNombre() == "tnum"){
                 code.append(hijos.get(i).getValor());
             }else if (hijos.get(i).getNombre() == "tcadena"){
-                code.append("\"").append(hijos.get(i).getValor()).append("\"");
+                code.append("\"").append(hijos.get(i).getValor().replaceAll("\n", "")).append("\"");
             }else if (hijos.get(i).getNombre() == "tboolean"){
-                code.append(hijos.get(i).getNombre().toUpperCase().charAt(0)).append(hijos.get(i).getNombre().substring(1, hijos.get(i).getNombre().length()).toLowerCase());
+                if (hijos.get(i).getValor().toLowerCase().equals("verdadero")){
+                    code.append("True");
+                }else{
+                    code.append("False");
+                }
             }else if (hijos.get(i).getNombre() == "tcaracter"){
                 code.append(hijos.get(i).getValor());
             }else if (hijos.get(i).getNombre() == "tcoma"){
@@ -665,9 +711,10 @@ public class Python {
         return code.toString();
     }
 
-    public String EXEC(Nodo nodo){
+    public String EXEC(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
+        code.append(Tab(cont));
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "tvar_name"){
                 String aux2 = hijos.get(i).getValor();
@@ -687,16 +734,17 @@ public class Python {
         return code.toString();
     }
 
-    public String PRINT(Nodo nodo){
+    public String PRINT(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "tprint" || hijos.get(i).getNombre() == "tprintln"){
+                code.append(Tab(cont));
                 code.append("print(");
             }else if (hijos.get(i).getNombre() == "Rel"){
                 code.append(REL(hijos.get(i)));
             }else if (hijos.get(i).getNombre() == "Exec"){
-                code.append(EXEC(hijos.get(i)));
+                code.append(EXEC(hijos.get(i), 0));
             }else if (hijos.get(i).getNombre() == "tvar_name"){
                 String aux2 = hijos.get(i).getValor();
                 aux2 = aux2.replaceFirst("_", "");
@@ -705,9 +753,13 @@ public class Python {
             }else if (hijos.get(i).getNombre() == "tnum"){
                 code.append(hijos.get(i).getValor());
             }else if (hijos.get(i).getNombre() == "tcadena"){
-                code.append("\"").append(hijos.get(i).getValor()).append("\"");
+                code.append("\"").append(hijos.get(i).getValor().replaceAll("\n", "")).append("\"");
             }else if (hijos.get(i).getNombre() == "tboolean"){
-                code.append(hijos.get(i).getNombre().toUpperCase().charAt(0)).append(hijos.get(i).getNombre().substring(1, hijos.get(i).getNombre().length()).toLowerCase());
+                if (hijos.get(i).getValor().toLowerCase().equals("verdadero")){
+                    code.append("True");
+                }else{
+                    code.append("False");
+                }
             }else if (hijos.get(i).getNombre() == "tcaracter"){
                 code.append(hijos.get(i).getValor());
             }else if (hijos.get(i).getNombre() == "tpcoma"){
@@ -717,34 +769,51 @@ public class Python {
         return code.toString();
     }
 
-    public String INSTRUCTION(Nodo nodo){
+    public String INSTRUCTION(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         if (nodo.getHijos().get(0).getNombre() == "Declaracion"){
-            code.append(STATEMENT(nodo.getHijos().get(0)));
+            code.append(STATEMENT(nodo.getHijos().get(0), cont));
         }else if (nodo.getHijos().get(0).getNombre() == "Asignacion"){
-            code.append(ASSIGMENT(nodo.getHijos().get(0)));
+            code.append(ASSIGMENT(nodo.getHijos().get(0), cont));
         }else if (nodo.getHijos().get(0).getNombre() == "Condicional"){
-            code.append(CONDITIONAL(nodo.getHijos().get(0)));
+            code.append(CONDITIONAL(nodo.getHijos().get(0), cont));
         }else if (nodo.getHijos().get(0).getNombre() == "Switch"){
-            code.append(SWITCH(nodo.getHijos().get(0)));
+            code.append(SWITCH(nodo.getHijos().get(0), cont));
         }else if (nodo.getHijos().get(0).getNombre() == "For"){
-            code.append(FOR(nodo.getHijos().get(0)));
+            code.append(FOR(nodo.getHijos().get(0), cont));
         }else if (nodo.getHijos().get(0).getNombre() == "While"){
-            code.append(WHILE(nodo.getHijos().get(0)));
+            code.append(WHILE(nodo.getHijos().get(0), cont));
         }else if (nodo.getHijos().get(0).getNombre() == "Repetir"){
-            code.append(REPETIR(nodo.getHijos().get(0)));
+            code.append(REPETIR(nodo.getHijos().get(0), cont));
+        }else if (nodo.getHijos().get(0).getNombre() == "Exec"){
+            code.append(EXEC(nodo.getHijos().get(0), cont));
+        }else if (nodo.getHijos().get(0).getNombre() == "Print"){
+            code.append(PRINT(nodo.getHijos().get(0), cont));
         }
         return code.toString();
     }
 
-    public String INSTRUCTIONS(Nodo nodo){
+    public String INSTRUCTIONS(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "Instruction"){
-                code.append(INSTRUCTION(hijos.get(i)));
+                code.append(INSTRUCTION(hijos.get(i), cont));
             }else if (hijos.get(i).getNombre() == "Instructions"){
-                code.append(INSTRUCTIONS(hijos.get(i)));
+                code.append(INSTRUCTIONS(hijos.get(i), cont));
+            }
+        }
+        return code.toString();
+    }
+
+    public String FUNCTIONS(Nodo nodo, int cont){
+        StringBuilder code = new StringBuilder();
+        ArrayList<Nodo> hijos = nodo.getHijos();
+        for (int i=0; i<hijos.size(); i++){
+            if (hijos.get(i).getNombre() == "Metodo"){
+                code.append(METODO(hijos.get(i), cont));
+            }else if (hijos.get(i).getNombre() == "Funcion"){
+                code.append(FUNCION(hijos.get(i), cont));
             }
         }
         return code.toString();
@@ -752,12 +821,24 @@ public class Python {
 
     public String GLOBAL(Nodo nodo){
         StringBuilder code = new StringBuilder();
+        StringBuilder principal = new StringBuilder();
+        StringBuilder func = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
+        int cont = 1;
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "Instructions"){
-                code.append(INSTRUCTIONS(hijos.get(i)));
+                principal.append(INSTRUCTIONS(hijos.get(i), cont));
+            }else if (hijos.get(i).getNombre() == "Metodo"){
+                func.append(METODO(hijos.get(i), cont));
+            }else if (hijos.get(i).getNombre() == "Funcion"){
+                func.append(FUNCION(hijos.get(i), cont));
             }
         }
+        code.append(func.toString());
+        code.append("\ndef main():\n");
+        code.append(principal.toString());
+        code.append("\nif __name__ == '__main__':\n");
+        code.append("\t").append("main()");
         return code.toString();
     }
 
