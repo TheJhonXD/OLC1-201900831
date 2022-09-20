@@ -133,7 +133,7 @@ INSTRUCTION ::= STATEMENT:s tpcoma {:
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
-    | STATEMENT:a {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, -1)); :}
+    | STATEMENT:a {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, aleft)); :}
     | ASSIGNMENT:s tpcoma {:
         Nodo n = new Nodo("Instruction");
         Nodo n2 = new Nodo("tpcoma");
@@ -145,7 +145,7 @@ INSTRUCTION ::= STATEMENT:s tpcoma {:
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
-    | ASSIGNMENT:a {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, -1)); :}
+    | ASSIGNMENT:a {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, aleft)); :}
     | CONDITIONAL:s tendif:a {:
         Nodo n = new Nodo("Instruction");
         Nodo n2 = new Nodo("tendif");
@@ -229,6 +229,7 @@ INSTRUCTION ::= STATEMENT:s tpcoma {:
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
+    | EXEC:a {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, aleft)); :}
     | PRINT:s tpcoma:a {:
         Nodo n = new Nodo("Instruction");
         Nodo n2 = new Nodo("tpcoma");
@@ -240,6 +241,7 @@ INSTRUCTION ::= STATEMENT:s tpcoma {:
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
+    | PRINT:a {: Instruction.list.addError(new Error_("Falta un: \";\"", "Sintactico", aright, aleft)); :}
     | error tpcoma
     | error tendif
     | error tfin_segun

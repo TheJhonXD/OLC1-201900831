@@ -1,3 +1,5 @@
+Inicia con S
+
 S ::= tinicio INSTRUCTIONS tfin
     | error tfin
 ;

@@ -20,6 +20,7 @@ import Instrucciones.Instruction;
 import AST.Python;
 import AST.TablaError;
 import java.awt.Desktop;
+import AST.DiagramaFlujo;
 
 /**
  *
@@ -136,6 +137,11 @@ public class Interface extends javax.swing.JFrame {
         jReport.setText("Report");
 
         jFlowchart.setText("Flowchart");
+        jFlowchart.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jFlowchartMousePressed(evt);
+            }
+        });
         jReport.add(jFlowchart);
 
         jErrors.setText("Errors");
@@ -365,6 +371,14 @@ public class Interface extends javax.swing.JFrame {
             System.out.println(e.getMessage());
         }
     }//GEN-LAST:event_jTechManualMousePressed
+
+    private void jFlowchartMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jFlowchartMousePressed
+        Instruction instr = Instruction.getInstance();
+        DiagramaFlujo d = new DiagramaFlujo();
+        d.createASTGraph(instr.ast);
+        System.out.println("diagrama creado");
+        System.out.println("--------------------------------");
+    }//GEN-LAST:event_jFlowchartMousePressed
 
     
     
