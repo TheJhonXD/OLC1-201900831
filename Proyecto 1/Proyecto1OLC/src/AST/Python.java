@@ -3,16 +3,18 @@ package AST;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
+import javax.print.attribute.HashPrintJobAttributeSet;
+
 /**
  *
  * @author TheJhonX
  */
 public class Python {
     private Nodo ast;
-    private String code;
+    private String funcs;
 
     public Python() {
-        
+        funcs = "";
     }
 
     public Nodo getAst() {
@@ -342,6 +344,7 @@ public class Python {
             }else if (hijos.get(i).getNombre() == "Instruction"){
                 code.append(INSTRUCTION(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "telse"){
+                code.append(Tab(cont));
                 code.append("else:\n");
             }else if (hijos.get(i).getNombre() == "Condicionales"){
                 code.append(CONDITIONALS(hijos.get(i), cont));
@@ -486,7 +489,15 @@ public class Python {
         StringBuilder code = new StringBuilder();
         boolean flag = false;
         boolean flag2 = false;
+        int flagDobleExpresion = 0;
         ArrayList<Nodo> hijos = nodo.getHijos();
+
+        for (int i=0; i<hijos.size(); i++){
+            if (hijos.get(i).getNombre() == "Expresion"){
+                flagDobleExpresion += 1;
+            }
+        }
+
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "For"){
                 code.append(FOR(hijos.get(i), cont + 1));
@@ -503,12 +514,19 @@ public class Python {
             }else if (hijos.get(i).getNombre() == "Expresion"){
                 flag2 = true;
                 if (!flag){
+                    flag = true;
                     code.append("range(").append(EXPRESSION(hijos.get(i))).append(", ");
                 }else{
                     code.append(EXPRESSION(hijos.get(i)));
                 }
             }else if (hijos.get(i).getNombre() == "tnum"){
-                code.append(hijos.get(i).getValor());
+                flag2 = true;
+                if (!flag){
+                    flag = true;
+                    code.append("range(").append(hijos.get(i).getValor());
+                }else{
+                    code.append(hijos.get(i).getValor());
+                }
             }else if (hijos.get(i).getNombre() == "tdo"){
                 if (flag2){
                     code.append("):\n");
@@ -521,6 +539,8 @@ public class Python {
                 code.append(INSTRUCCIONES(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "tfin_for"){
                 code.append("\n");
+            }else if (hijos.get(i).getNombre() == "thasta"){
+                code.append(", ");
             }
         }
         return code.toString();
@@ -630,6 +650,12 @@ public class Python {
     public String METODO(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
+        boolean flagParam = false;
+        for (int i=0; i<hijos.size(); i++){
+            if (hijos.get(i).getNombre() == "Parametros"){
+                flagParam = true;
+            }
+        }
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "tmetodo"){
                 code.append(Tab(cont));
@@ -638,9 +664,14 @@ public class Python {
                 String aux2 = hijos.get(i).getValor();
                 aux2 = aux2.replaceFirst("_", "");
                 aux2 = replaceLast("_", "", aux2);
-                code.append(aux2).append(" (");
+                code.append(aux2);
+                if (!flagParam){
+                    code.append("():\n");
+                }
             }else if (hijos.get(i).getNombre() == "Parametros"){
+                code.append("(");
                 code.append(PARAMS(hijos.get(i)));
+                code.append("):\n");
             }else if (hijos.get(i).getNombre() == "Instructions"){
                 code.append(INSTRUCTIONS(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Instruction"){
@@ -655,6 +686,12 @@ public class Python {
     public String FUNCION(Nodo nodo, int cont){
         StringBuilder code = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
+        boolean flagParam = false;
+        for (int i=0; i<hijos.size(); i++){
+            if (hijos.get(i).getNombre() == "Parametros"){
+                flagParam = true;
+            }
+        }
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "tfuncion"){
                 code.append(Tab(cont));
@@ -663,9 +700,14 @@ public class Python {
                 String aux2 = hijos.get(i).getValor();
                 aux2 = aux2.replaceFirst("_", "");
                 aux2 = replaceLast("_", "", aux2);
-                code.append(aux2).append(" (");
+                code.append(aux2);
+                if (!flagParam){
+                    code.append("():\n");
+                }
             }else if (hijos.get(i).getNombre() == "Parametros"){
+                code.append("(");
                 code.append(PARAMS(hijos.get(i)));
+                code.append("):\n");
             }else if (hijos.get(i).getNombre() == "Instructions"){
                 code.append(INSTRUCTIONS(hijos.get(i), cont + 1));
             }else if (hijos.get(i).getNombre() == "Instruction"){
@@ -789,6 +831,10 @@ public class Python {
             code.append(EXEC(nodo.getHijos().get(0), cont));
         }else if (nodo.getHijos().get(0).getNombre() == "Print"){
             code.append(PRINT(nodo.getHijos().get(0), cont));
+        }else if (nodo.getHijos().get(0).getNombre() == "Funcion"){
+            funcs += FUNCION(nodo.getHijos().get(0), 0);
+        }else if (nodo.getHijos().get(0).getNombre() == "Metodo"){
+            funcs += METODO(nodo.getHijos().get(0), 0);
         }
         return code.toString();
     }
@@ -822,19 +868,14 @@ public class Python {
     public String GLOBAL(Nodo nodo){
         StringBuilder code = new StringBuilder();
         StringBuilder principal = new StringBuilder();
-        StringBuilder func = new StringBuilder();
         ArrayList<Nodo> hijos = nodo.getHijos();
         int cont = 1;
         for (int i=0; i<hijos.size(); i++){
             if (hijos.get(i).getNombre() == "Instructions"){
                 principal.append(INSTRUCTIONS(hijos.get(i), cont));
-            }else if (hijos.get(i).getNombre() == "Metodo"){
-                func.append(METODO(hijos.get(i), cont));
-            }else if (hijos.get(i).getNombre() == "Funcion"){
-                func.append(FUNCION(hijos.get(i), cont));
             }
         }
-        code.append(func.toString());
+        code.append(funcs);
         code.append("\ndef main():\n");
         code.append(principal.toString());
         code.append("\nif __name__ == '__main__':\n");
@@ -842,10 +883,10 @@ public class Python {
         return code.toString();
     }
 
-    public void createPyFile(String texto){
+    public void createPyFile(String texto, String path){
         try {
-            String path = "C:\\Users\\TheJhonX\\Desktop\\AST\\";
-            FileWriter f = new FileWriter(path + "prueba.py");
+            // String path = "C:\\Users\\TheJhonX\\Desktop\\AST\\";
+            FileWriter f = new FileWriter(path);
             f.write(texto);
             f.close();
             

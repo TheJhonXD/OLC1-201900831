@@ -18,6 +18,8 @@ import Analizadores.Parser;
 import Analizadores.Scanner;
 import Instrucciones.Instruction;
 import AST.Python;
+import AST.TablaError;
+import java.awt.Desktop;
 
 /**
  *
@@ -28,8 +30,13 @@ public class Interface extends javax.swing.JFrame {
     /**
      * Creates new form Interface
      */
+    
+    NumeroLinea numLinea;
+    
     public Interface() {
         initComponents();
+        numLinea = new NumeroLinea(jCajaTexto);
+        jScrollPane1.setRowHeaderView(numLinea);
     }
 
     /**
@@ -45,6 +52,9 @@ public class Interface extends javax.swing.JFrame {
         jCajaTexto = new javax.swing.JTextArea();
         jBtnClean = new javax.swing.JButton();
         jBtnRun = new javax.swing.JButton();
+        jButtonPython = new javax.swing.JButton();
+        jButtonGo = new javax.swing.JButton();
+        jshowErrores = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jFile = new javax.swing.JMenu();
         jOpenFile = new javax.swing.JMenuItem();
@@ -60,11 +70,17 @@ public class Interface extends javax.swing.JFrame {
         setTitle("Proyecto 1 OLC");
 
         jCajaTexto.setColumns(20);
+        jCajaTexto.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jCajaTexto.setRows(5);
         jCajaTexto.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         jScrollPane1.setViewportView(jCajaTexto);
 
         jBtnClean.setText("Clean");
+        jBtnClean.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jBtnCleanMousePressed(evt);
+            }
+        });
 
         jBtnRun.setText("Run");
         jBtnRun.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -72,6 +88,17 @@ public class Interface extends javax.swing.JFrame {
                 jBtnRunMousePressed(evt);
             }
         });
+
+        jButtonPython.setText("Codigo en Python");
+        jButtonPython.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jButtonPythonMousePressed(evt);
+            }
+        });
+
+        jButtonGo.setText("Codigo en Golang");
+
+        jshowErrores.setText("0 errores");
 
         jFile.setText("File");
         jFile.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -112,6 +139,16 @@ public class Interface extends javax.swing.JFrame {
         jReport.add(jFlowchart);
 
         jErrors.setText("Errors");
+        jErrors.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jErrorsMousePressed(evt);
+            }
+        });
+        jErrors.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jErrorsActionPerformed(evt);
+            }
+        });
         jReport.add(jErrors);
 
         jMenuBar1.add(jReport);
@@ -119,9 +156,19 @@ public class Interface extends javax.swing.JFrame {
         jView.setText("View");
 
         jUserManual.setText("User manual");
+        jUserManual.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jUserManualMousePressed(evt);
+            }
+        });
         jView.add(jUserManual);
 
         jTechManual.setText("Technical manual");
+        jTechManual.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jTechManualMousePressed(evt);
+            }
+        });
         jView.add(jTechManual);
 
         jMenuBar1.add(jView);
@@ -134,13 +181,22 @@ public class Interface extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(43, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jBtnClean)
-                        .addGap(18, 18, 18)
-                        .addComponent(jBtnRun))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 679, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(38, 38, 38))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jBtnClean)
+                                .addGap(18, 18, 18)
+                                .addComponent(jBtnRun))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 679, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(38, 38, 38))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jshowErrores)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonPython)
+                        .addGap(29, 29, 29)
+                        .addComponent(jButtonGo)
+                        .addGap(53, 53, 53))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -149,9 +205,15 @@ public class Interface extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBtnClean)
                     .addComponent(jBtnRun))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(65, 65, 65))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButtonPython, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jshowErrores))
+                    .addComponent(jButtonGo))
+                .addGap(25, 25, 25))
         );
 
         pack();
@@ -209,7 +271,7 @@ public class Interface extends javax.swing.JFrame {
     /*Al hacer click sobre el submenu Open file*/
     private void jOpenFileMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jOpenFileMousePressed
         JFileChooser chooser=new JFileChooser();
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.TXT", "txt");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.olc", "olc");
         chooser.setFileFilter(filtro);
         int selec = chooser.showOpenDialog(null);
         if (selec == JFileChooser.APPROVE_OPTION){
@@ -225,7 +287,7 @@ public class Interface extends javax.swing.JFrame {
     private void JSaveAsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JSaveAsMousePressed
         JFileChooser save = new JFileChooser();
         /*Comprobar al guardar no lo guarda con la extension definida*/
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.TXT", "txt");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("*.olc", "olc");
         save.setFileFilter(filtro);
         int selec = save.showSaveDialog(null);
         if (selec == JFileChooser.APPROVE_OPTION){
@@ -235,26 +297,74 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_JSaveAsMousePressed
 
     private void jBtnRunMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtnRunMousePressed
-        try {  
+        try {
             String text = jCajaTexto.getText();
             Instruction instr = Instruction.getInstance();
             instr.analize(text);
             for (int i=0; i<instr.list.size(); i++){
-                System.out.println(instr.list.get(i).getMessage());
+                System.out.println(instr.list.get(i).getMessage() + " Linea " + instr.list.get(i).getLine());
             }
+            jshowErrores.setText(instr.list.size() + " errores");
             System.out.println("--------------------------------");
             instr.createASTGraph(instr.ast);
             System.out.println("AST creado");
             System.out.println("--------------------------------");
-            Python p = new Python();
-            String codePy = p.GLOBAL(instr.ast);
-            p.createPyFile(codePy);
-            System.out.println("Archivo.py creado");
-            System.out.println("--------------------------------");
+            
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }//GEN-LAST:event_jBtnRunMousePressed
+
+    private void jErrorsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jErrorsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jErrorsActionPerformed
+
+    private void jErrorsMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jErrorsMousePressed
+        Instruction instr = Instruction.getInstance();
+        TablaError t = new TablaError();
+        t.createHtmlFile(instr.list);
+        System.out.println("Tabla.html creado");
+        System.out.println("--------------------------------");
+    }//GEN-LAST:event_jErrorsMousePressed
+
+    private void jButtonPythonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonPythonMousePressed
+        try{
+            Modal m = new Modal(this, true);
+            m.setVisible(true);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        //p.createPyFile(codePy);
+        
+        System.out.println("Archivo.py creado");
+        System.out.println("--------------------------------");
+    }//GEN-LAST:event_jButtonPythonMousePressed
+
+    private void jBtnCleanMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBtnCleanMousePressed
+        jCajaTexto.setText("");
+    }//GEN-LAST:event_jBtnCleanMousePressed
+
+    private void jUserManualMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jUserManualMousePressed
+        try{
+            File file = new File("src\\Manuales\\Manual de usuario.pdf");
+            if (file.exists()){
+                Desktop.getDesktop().open(file);
+            }
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+    }//GEN-LAST:event_jUserManualMousePressed
+
+    private void jTechManualMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTechManualMousePressed
+        try{
+            File file = new File("src\\Manuales\\Manual Tecnico.pdf");
+            if (file.exists()){
+                Desktop.getDesktop().open(file);
+            }
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+    }//GEN-LAST:event_jTechManualMousePressed
 
     
     
@@ -298,6 +408,8 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JMenuItem JSaveAs;
     private javax.swing.JButton jBtnClean;
     private javax.swing.JButton jBtnRun;
+    private javax.swing.JButton jButtonGo;
+    private javax.swing.JButton jButtonPython;
     private javax.swing.JTextArea jCajaTexto;
     private javax.swing.JMenuItem jErrors;
     private javax.swing.JMenu jFile;
@@ -309,5 +421,6 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JMenuItem jTechManual;
     private javax.swing.JMenuItem jUserManual;
     private javax.swing.JMenu jView;
+    private javax.swing.JLabel jshowErrores;
     // End of variables declaration//GEN-END:variables
 }

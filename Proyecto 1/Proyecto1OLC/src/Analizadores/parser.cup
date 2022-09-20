@@ -16,14 +16,14 @@ parser code
     public void syntax_error(Symbol s){ 
         //System.out.println("Unexpected token: " +s.value);
         //System.out.println("Error sintactico en la linea " + (s.right + 1) + " column " + (s.left + 1));
-        Instruction.list.addError(new Error_("Error sintactico: " + s.value, "Sintactico", s.right + 1, s.left + 1));
+        Instruction.list.addError(new Error_("Token no valido: " + s.value, "Sintactico", s.right + 1, s.left + 1));
     }
 
     /*Method that is called when parser can't be recovered*/
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
         //System.out.println("Error sintactico unrecovered: " + s.value);
         //System.out.println("Error sintactico unrecovered en la linea " + s.right + " column " + s.left);
-        Instruction.list.addError(new Error_("Error sintactico unrecovered: " + s.value, "Sintactico", s.right + 1, s.left + 1));
+        Instruction.list.addError(new Error_("Token no valido unrecovered: " + s.value, "Sintactico", s.right + 1, s.left + 1));
     } 
 :}
 
@@ -384,14 +384,46 @@ CONDITIONAL ::= tif:a CONDITION:b tthen:c INSTRUCTIONS:d {:
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
-    | tif:a CONDITION:b CONDITIONALS:c {:
+    | tif:a CONDITION:b tthen:c INSTRUCTIONS:d CONDITIONALS:e {:
         Nodo n = new Nodo("Condicional");
         Nodo n2 = new Nodo("tif");
+        Nodo n3 = new Nodo("tthen");
         n2.setValor(a.toString());
         n2.setIdNodo(parser.cont++);
+        n3.setValor(c.toString());
+        n3.setIdNodo(parser.cont++);
         n.addHijo(n2);
         n.addHijo((Nodo) b);
-        n.addHijo((Nodo) c);
+        n.addHijo(n3);
+        for (int i=0; i<d.size(); i++){
+            n.addHijo(d.get(i));
+        }
+        n.addHijo((Nodo) e);
+        n.setIdNodo(parser.cont++);
+        RESULT = n;
+    :}
+    | tif:a CONDITION:b tthen:c INSTRUCTIONS:d CONDITIONALS:e telse:f INSTRUCTIONS:g {:
+        Nodo n = new Nodo("Condicional");
+        Nodo n2 = new Nodo("tif");
+        Nodo n3 = new Nodo("tthen");
+        Nodo n4 = new Nodo("telse");
+        n2.setValor(a.toString());
+        n2.setIdNodo(parser.cont++);
+        n3.setValor(c.toString());
+        n3.setIdNodo(parser.cont++);
+        n4.setValor(f.toString());
+        n4.setIdNodo(parser.cont++);
+        n.addHijo(n2);
+        n.addHijo((Nodo) b);
+        n.addHijo(n3);
+        for (int i=0; i<d.size(); i++){
+            n.addHijo(d.get(i));
+        }
+        n.addHijo((Nodo) e);
+        n.addHijo(n4);
+        for (int i=0; i<g.size(); i++){
+            n.addHijo(g.get(i));
+        }
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
@@ -402,7 +434,6 @@ CONDITIONALS ::= CONDITIONALS:a telseif:b CONDITION:c tthen:d INSTRUCTIONS:e {:
         Nodo n2 = new Nodo("telseif");
         Nodo n3 = new Nodo("tthen");
         n2.setValor(b.toString());
-        //TODO: Arreglar problema con condicional multiple
         n2.setIdNodo(parser.cont++);
         n3.setValor(d.toString());
         n3.setIdNodo(parser.cont++);
@@ -416,14 +447,19 @@ CONDITIONALS ::= CONDITIONALS:a telseif:b CONDITION:c tthen:d INSTRUCTIONS:e {:
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
-    | telse:a INSTRUCTIONS:b {:
+    | telseif:b CONDITION:c tthen:d INSTRUCTIONS:e {:
         Nodo n = new Nodo("Condicionales");
-        Nodo n2 = new Nodo("telse");
-        n2.setValor(a.toString());
+        Nodo n2 = new Nodo("telseif");
+        Nodo n3 = new Nodo("tthen");
+        n2.setValor(b.toString());
         n2.setIdNodo(parser.cont++);
+        n3.setValor(d.toString());
+        n3.setIdNodo(parser.cont++);
         n.addHijo(n2);
-        for (int i=0; i<b.size(); i++){
-            n.addHijo(b.get(i));
+        n.addHijo((Nodo) c);
+        n.addHijo(n3);
+        for (int i=0; i<e.size(); i++){
+            n.addHijo(e.get(i));
         }
         n.setIdNodo(parser.cont++);
         RESULT = n;
@@ -677,7 +713,9 @@ SWITCH ::= tsegun:a EXPRESSION:b tdo:c CASE:d DEFAULT:e {:
         n.addHijo((Nodo) b);
         n.addHijo(n3);
         n.addHijo((Nodo) d);
-        n.addHijo((Nodo) e);
+        if (e != null){
+            n.addHijo((Nodo) e);
+        }
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
@@ -780,9 +818,13 @@ FOR ::= tfor:a tvar_name:b tarrow:c EXPRESSION:d thasta:e EXPRESSION:f INCREASE:
         n.addHijo((Nodo) d);
         n.addHijo(n5);
         n.addHijo((Nodo) f);
-        n.addHijo((Nodo) g);
+        if (g != null){
+            n.addHijo((Nodo) g);
+        }
         n.addHijo(n6);
-        n.addHijo((Nodo) j);
+        if (j != null){
+            n.addHijo((Nodo) j);
+        }
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
@@ -823,7 +865,9 @@ WHILE ::= twhile:a CONDITION:b tdo:c INSTRUCCIONES:d {:
         n.addHijo(n2);
         n.addHijo((Nodo) b);
         n.addHijo(n3);
-        n.addHijo((Nodo) d);
+        if (d != null){
+            n.addHijo((Nodo) d);
+        }
         n.setIdNodo(parser.cont++);
         RESULT = n;
     :}
@@ -838,7 +882,9 @@ REPETIR ::= trepeat:a INSTRUCCIONES:b tuntil:c CONDITION:d {:
         n3.setValor(c.toString());
         n3.setIdNodo(parser.cont++);
         n.addHijo(n2);
-        n.addHijo((Nodo) b);
+        if (b != null){
+            n.addHijo((Nodo) b);
+        }
         n.addHijo(n3);
         n.addHijo((Nodo) d);
         n.setIdNodo(parser.cont++);
@@ -872,7 +918,9 @@ METODO ::= tmetodo:a tvar_name:b PARAMS:c INSTRUCTIONS:d {:
         n3.setIdNodo(parser.cont++);
         n.addHijo(n2);
         n.addHijo(n3);
-        n.addHijo((Nodo) c);
+        if (c != null){
+            n.addHijo((Nodo) c);
+        }
         for (int i=0; i<d.size(); i++){
             n.addHijo(d.get(i));
         }
@@ -936,7 +984,9 @@ FUNCION ::= tfuncion:a tvar_name:b DATATYPE:c PARAMS:d INSTRUCTIONS:e RETURN:f {
         n.addHijo(n2);
         n.addHijo(n3);
         n.addHijo((Nodo) c);
-        n.addHijo((Nodo) d);
+        if (d != null){
+            n.addHijo((Nodo) d);
+        }
         for (int i=0; i<e.size(); i++){
             n.addHijo(e.get(i));
         }
@@ -963,7 +1013,9 @@ EXEC ::= texec:a tvar_name:b tparA:c PARAMETROS:d tparC:e {:
         n.addHijo(n2);
         n.addHijo(n3);
         n.addHijo(n4);
-        n.addHijo((Nodo) d);
+        if (d != null){
+            n.addHijo((Nodo) d);
+        }
         n.addHijo(n5);
         n.setIdNodo(parser.cont++);
         RESULT = n;

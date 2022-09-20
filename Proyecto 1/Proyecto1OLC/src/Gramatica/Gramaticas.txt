@@ -1,0 +1,195 @@
+S ::= tinicio INSTRUCTIONS tfin
+    | error tfin
+;
+
+INSTRUCTIONS ::= INSTRUCTIONS INSTRUCTION
+    | INSTRUCTION
+;
+
+INSTRUCTION ::= STATEMENT
+    | STATEMENT tpcoma
+    | ASSIGNMENT
+    | ASSIGNMENT tpcoma
+    | CONDITIONAL tendif
+    | SWITCH tfin_segun
+    | FOR tfin_for
+    | WHILE tend_while
+    | REPETIR
+    | METODO tfin_metodo
+    | FUNCION tfin_funcion
+    | EXEC tpcoma
+    | PRINT tpcoma
+;
+****************************************************************************
+**                             Declaración                                **
+****************************************************************************
+
+//Declaración
+STATEMENT ::= tingresar VAR tcomo DATATYPE tcon_val REL;
+
+LISTREL ::= LISTREL tcoma LISTREL
+    | REL
+;
+
+//Variable
+VAR ::= VAR tcoma VAR
+    | tvar_name
+;
+
+//Tipo
+DATATYPE ::= tint
+    | tstring
+    | tbool
+    | tchar
+;
+
+****************************************************************************
+**                             Asignación                                 **
+****************************************************************************
+
+//Asignación
+ASSIGNMENT ::= VAR tarrow LISTREL;
+
+
+----------------------------------------------------------------------------
+//Expresion
+EXPRESSION ::= trest EXPRESSION
+    | EXPRESSION tsum EXPRESSION 
+    | EXPRESSION trest EXPRESSION
+    | EXPRESSION tdiv EXPRESSION 
+    | EXPRESSION tmul EXPRESSION 
+    | EXPRESSION tpot tcorA EXPRESSION tcorC 
+    | EXPRESSION tmod EXPRESSION 
+    | tparA EXPRESSION tparC
+    | tvar_name
+    | tnum
+    | tcadena
+    | tboolean
+    | tcaracter        
+;
+
+****************************************************************************
+**                             Condicionales                              **
+****************************************************************************
+
+//Condicionales
+CONDITIONAL ::= tif CONDITION tthen INSTRUCTIONS
+    | tif CONDITION INSTRUCTIONS telse INSTRUCTIONS
+    | tif CONDITION tthen INSTRUCTIONS CONDITIONALS
+    | tif CONDITION tthen INSTRUCTIONS CONDITIONALS telse INSTRUCTIONS
+;
+CONDITIONALS ::= CONDITIONALS telseif CONDITION tthen INSTRUCTIONS
+    | telseif CONDITION tthen INSTRUCTIONS
+;
+
+CONDITION ::= CONDITION tor CONDITION
+    | CONDITION tand CONDITION
+    | tnot CONDITION
+    | tparA CONDITION tparC
+    | REL
+;
+
+REL ::= EXPRESSION OP_REL EXPRESSION
+    | EXPRESSION
+;
+
+OP_REL ::= tmayor
+    | tmenor
+    | tmayor_igual
+    | tmenor_igual
+    | tes_igual
+    | tdifer
+;
+
+****************************************************************************
+**                             Selección Multiple                         **
+****************************************************************************
+
+SWITCH ::= tsegun EXPRESSION tdo CASE DEFAULT;
+
+CASE ::= CASE C
+    | C
+;
+
+C ::= tQn_A OPC tQn_C tthen INSTRUCTIONS;
+
+OPC ::= tnum
+    | tcaracter
+    | tcadena
+;
+
+DEFAULT ::= telse tthen INSTRUCTIONS
+    | //empty
+;
+
+****************************************************************************
+**                             Ciclo Para                                 **
+****************************************************************************
+
+FOR ::= tfor tvar_name tarrow EXPRESSION thasta EXPRESSION INCREASE tdo INSTRUCCIONES
+;
+
+INCREASE ::= tincrease EXPRESSION
+    | //empty
+;
+
+INSTRUCCIONES ::= INSTRUCTIONS
+    | //empty
+;
+
+****************************************************************************
+**                             Ciclo Mientras                             **
+****************************************************************************
+
+WHILE ::= twhile CONDITION tdo INSTRUCCIONES;
+
+****************************************************************************
+**                             Ciclo Repetir hasta                        **
+****************************************************************************
+
+REPETIR ::= trepeat INSTRUCCIONES tuntil CONDITION;
+
+****************************************************************************
+**                             Retornar                                   **
+****************************************************************************
+
+RETURN ::= treturn CONDITION tpcoma
+    | //empty
+;
+
+****************************************************************************
+**                             Metodo                                     **
+****************************************************************************
+
+METODO ::= tmetodo tvar_name PARAMS INSTRUCTIONS;
+
+PARAMS ::= tparams tparA LISTPARAMS tparC INSTRUCTIONS
+    | //empty
+;
+
+LISTPARAMS ::= LISTPARAMS tcoma LISTPARAMS
+    | tvar_name DATATYPE
+;
+
+****************************************************************************
+**                             Funcion                                    **
+****************************************************************************
+
+FUNCION ::= tfuncion tvar_name DATATYPE PARAMS INSTRUCTIONS RETURN;
+
+****************************************************************************
+**                     LLamar Funciones y Metodos                         **
+****************************************************************************
+
+EXEC ::= texec tvar_name tparA PARAMETROS tparC;
+
+PARAMETROS ::= PARAMETROS tcoma PARAMETROS 
+    | EXPRESSION
+    | //empty
+;
+
+PRINT ::= tprint REL
+    | tprint EXEC
+    | tprintln REL
+    | tprintln EXEC
+;

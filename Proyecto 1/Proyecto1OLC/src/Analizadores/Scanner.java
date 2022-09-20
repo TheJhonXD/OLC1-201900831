@@ -841,7 +841,7 @@ public class Scanner implements java_cup.runtime.Scanner {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1:
             { //System.out.println("Error Lexico: " + yytext() + " Linea " + (yyline + 1) + " Columna " + (yycolumn + 1));
-        Instruction.list.addError(new Error_("Error lexico: " + yytext(), "Lexico", yyline + 1, yycolumn + 1));
+        Instruction.list.addError(new Error_("Token no valido: " + yytext(), "Lexico", yyline + 1, yycolumn + 1));
             }
             // fall through
           case 69: break;
