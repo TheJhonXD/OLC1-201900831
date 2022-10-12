@@ -20,5 +20,5 @@ app.get('/', (req, res) => {
 });
 
 app.get('/texto', (req, res) => {
-    res.send("hola mundo jsjsjsj")
+    res.json({ mensaje: "hola mundo!!! c:" });
 });

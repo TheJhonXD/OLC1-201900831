@@ -1,0 +1,78 @@
+body{
+    font-family: 'Open Sans', 'Arial', sans-serif;
+    font-size: 16px;
+    background: #f2f2f2;
+    color: #fff;
+}
+
+.menu{
+    width: 100%;
+    background: #42a5f5;
+    display: flex;
+}
+
+.menu .editor-name{
+    font-size: 25px;
+    font-weight: 600;
+    margin: auto 15px;
+}
+
+.menu .editor-name,
+.navbar-nav a{
+    font-family: 'Open Sans', 'Arial', sans-serif;
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+    transition: all .3s ease;
+}
+
+.navbar-nav{
+    position: relative;
+}
+
+.navbar-nav li{
+    display: inline-block;
+    list-style: none;
+}
+
+.navbar-nav a{
+    font-weight: 500;
+    padding: 15px 25px;
+}
+
+.navbar-nav a:hover{
+    background: #f2f2f2;
+    color: #42a5f5;
+}
+
+.navbar-nav a:hover + .dropdown{
+    display: block;
+}
+
+.dropdown{
+    width: 150px;
+    max-width: 150px;
+    display: none;
+    position: absolute;
+    background: #f2f2f2;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, .2);
+    border-radius: 0px 0px 3px 3px;
+    left: 5px;
+    /* border-bottom: 2px solid #42a5f5; */
+}
+
+.dropdown .dp-item a{
+    display: inline-block;
+    color: #333333;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.dropdown .dp-item a:hover{
+    background: #42a5f5;
+    color: #f2f2f2;
+}
+
+.navbar-nav i{
+    margin-left: 5px;
+}
