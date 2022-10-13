@@ -1,75 +1,86 @@
-body{
-    font-family: 'Open Sans', 'Arial', sans-serif;
-    font-size: 16px;
-    background: #f2f2f2;
-    color: #fff;
-}
-
 .menu{
     width: 100%;
-    background: #42a5f5;
+    background: #ff5370;
     display: flex;
 }
 
-.menu .editor-name{
+.editor-name-container{
+    display: flex;
+    align-items: center;
+    background: #263544;
+}
+
+.editor-name-container .editor-name{
     font-size: 25px;
     font-weight: 600;
-    margin: auto 15px;
+    margin: auto 25px;
 }
 
 .menu .editor-name,
 .navbar-nav a{
-    font-family: 'Open Sans', 'Arial', sans-serif;
+    font-family: 'Poppins', 'Arial', sans-serif;
     display: inline-block;
     color: #fff;
     text-decoration: none;
     transition: all .3s ease;
 }
 
+.menu .editor-name{
+    font-family: 'Quicksand';
+    font-weight: 700;
+}
+
 .navbar-nav{
     position: relative;
+    display: flex;
 }
 
 .navbar-nav li{
-    display: inline-block;
     list-style: none;
 }
 
 .navbar-nav a{
-    font-weight: 500;
-    padding: 15px 25px;
+    font-weight: 400;
+    padding: 20px 25px;
 }
 
-.navbar-nav a:hover{
+.navbar-nav .navbar-item:hover > a{
     background: #f2f2f2;
-    color: #42a5f5;
+    color: #ff5370;
 }
 
-.navbar-nav a:hover + .dropdown{
+.navbar-nav .navbar-item:hover .dropdown{
     display: block;
 }
 
+.arrow-icon{
+    transition: all .3s ease-in;
+}
+
+
+.navbar-nav .navbar-item:hover .arrow-icon{
+    transform: rotate(180deg);
+}
+
 .dropdown{
-    width: 150px;
-    max-width: 150px;
+    width: 180px;
+    max-width: 180px;
     display: none;
     position: absolute;
     background: #f2f2f2;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, .2);
+    box-shadow: 2px 4px 5px rgba(0, 0, 0, .25);
     border-radius: 0px 0px 3px 3px;
-    left: 5px;
-    /* border-bottom: 2px solid #42a5f5; */
 }
 
 .dropdown .dp-item a{
-    display: inline-block;
-    color: #333333;
+    display: block;
+    color: #263544;
     font-size: 14px;
     font-weight: 400;
 }
 
 .dropdown .dp-item a:hover{
-    background: #42a5f5;
+    background: #ff5370;
     color: #f2f2f2;
 }
 

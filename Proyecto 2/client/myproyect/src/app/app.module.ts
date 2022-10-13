@@ -6,13 +6,15 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { WorkspaceComponent } from './components/workspace/workspace.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
-    NavbarComponent
+    NavbarComponent,
+    WorkspaceComponent
   ],
   imports: [
     BrowserModule,
