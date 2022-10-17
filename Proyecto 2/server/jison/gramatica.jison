@@ -61,18 +61,20 @@
 "{"                                                     return "llaveA";
 "}"                                                     return "llaveC";
 
-//Asignacion
+//Declaracion y asignacion
 "="                                                     return "igual";
+(([a-zA-Z])([a-zA-Z]|[0-9]|\_)*)                        return 'var_name';
+","                                                     return 'coma';
 
+//"inicio"        { console.log("Reconoció un simbolo reservado. Con lexema: " + yytext); return 'inicio'; }
 
-","             { console.log("Reconoció un simbolo reservado. Con lexema: " + yytext); return 'coma'; }
-"inicio"        { console.log("Reconoció un simbolo reservado. Con lexema: " + yytext); return 'inicio'; }
-
+//Espacios en blanco
 [ \r\t]+        {/* Estos caracteres se omiten */}
 
+//Salto de línea
 \n              { /* Este caracter se omite */ }
 
-[a-zA-z]+       { console.log("Reconoció una palabra, con lexema: " + yytext); return 'palabra'; }
+//[a-zA-z]+       { return 'palabra'; }
 
 <<EOF>>         return 'EOF';
 
@@ -81,20 +83,56 @@
 /lex
 
 /* PRECEDENCIA */
+%left 'or'
+%left 'and'
+%right 'not'
+%left 'igual_a' 'diferente' 'menor' 'menor_igual' 'mayor' 'mayor_igual'
 %left 'mas' 'menos'
 %left 'multi' 'div'
-%left 'pot'
-%left UMENOS
+%left 'pot' 'mod'
+%left 'parA' 'parC'
+%left umenos
 
-%start INIT
+%start S
 
 %%
 
 /* --------------------------------- Gramatica del lenguaje --------------------------------- */
-INIT : inicio BLOQUE EOF { console.log("analisis terminado"); } 
-    | error EOF   {console.error("Error sintactico"+ yytext + " en la linea: " + this._$.first_line + " columna: " + this._$.first_column);}
+
+S : INSTRUCTIONS EOF { console.log("Analisis terminado") };
+
+INSTRUCTIONS : INSTRUCTIONS INSTRUCTION
+    | INSTRUCTION
 ;
 
-BLOQUE : BLOQUE coma palabra
-    | palabra
+INSTRUCTION : STATEMENT ptcoma
+    | ASSIGNMENT ptcoma
+    | error { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
+;
+
+STATEMENT : TIPO ID
+    | TIPO ID igual EXPRESSION
+;
+
+TIPO : int
+    | double
+    | boolean
+    | char
+    | string
+;
+
+ID : ID coma var_name
+    | var_name
+;
+
+EXPRESSION : menos EXPRESSION %prec umenos
+    | EXPRESSION mas EXPRESSION
+    | EXPRESSION menos EXPRESSION
+    | EXPRESSION multi EXPRESSION
+    | EXPRESSION div EXPRESSION
+    | EXPRESSION pot EXPRESSION
+    | EXPRESSION mod EXPRESSION
+    | parA EXPRESSION parC
+    | entero
+    | decimal
 ;

@@ -3,8 +3,9 @@ const gramatica = require('./gramatica');
 
 fs.readFile('./entrada.txt', (err, data) => {
     if (err) throw err;
-    console.log("Todo está bien");
+    console.log("********** Texto obtenido ************");
     console.log(data.toString());
-    console.log("ahora toca analizar");
+    console.log("************************************");
+    console.log("Analizando...");
     gramatica.parse(data.toString());
 });
