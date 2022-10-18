@@ -17,9 +17,10 @@
 
 //Tipos
 ([0-9]+)                                                return 'entero';
-([0-9]+[.][0-9]+)                                       return 'decimal';
+//([0-9]+(["."][0-9]+))                                   return 'decimal';
+"."                                                     return 'punto';
 ((t|T)rue|(f|F)alse)                                    return 'logico';
-('([a-zA-Z]|[!-[]|[\]-¿]|(\\(\'|n|t|r|\\))|[ ])')       return 'caracter';
+(\'([a-zA-Z]|[!-[]|[\]-¿]|(\\(\'|n|t|r|\\))|[ ])\')     return 'caracter';
 (\"(.*|[^\"]+)\")                                       return 'cadena';
 
 //Tipos de datos
@@ -43,30 +44,29 @@
 ">="                                                    return 'mayor_igual';
 "<="                                                    return 'menor_igual';
 "=="                                                    return 'igual_a';
-"!="                                                    return "diferente";
-"?"                                                     return "qn_C";
-":"                                                     return "colon";
+"!="                                                    return 'diferente';
+"?"                                                     return 'qn_C';
+":"                                                     return 'colon';
 
 //Operadores logicos
-"||"                                                    return "or";
-"&&"                                                    return "and";
-"!"                                                     return "not";
+"||"                                                    return 'or';
+"&&"                                                    return 'and';
+"!"                                                     return 'not';
 
 //Signos de agrupación
-"("                                                     return "parA";
-")"                                                     return "parC";
+"("                                                     return 'parA';
+")"                                                     return 'parC';
 
 //Finalización y encapsulamiento
-";"                                                     return "ptcoma";
-"{"                                                     return "llaveA";
-"}"                                                     return "llaveC";
+";"                                                     return 'ptcoma';
+"{"                                                     return 'llaveA';
+"}"                                                     return 'llaveC';
 
 //Declaracion y asignacion
-"="                                                     return "igual";
+"="                                                     return 'igual';
 (([a-zA-Z])([a-zA-Z]|[0-9]|\_)*)                        return 'var_name';
 ","                                                     return 'coma';
 
-//"inicio"        { console.log("Reconoció un simbolo reservado. Con lexema: " + yytext); return 'inicio'; }
 
 //Espacios en blanco
 [ \r\t]+        {/* Estos caracteres se omiten */}
@@ -110,6 +110,7 @@ INSTRUCTION : STATEMENT ptcoma
     | error { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
 ;
 
+/* DECLARACION */
 STATEMENT : TIPO ID
     | TIPO ID igual EXPRESSION
 ;
@@ -134,5 +135,18 @@ EXPRESSION : menos EXPRESSION %prec umenos
     | EXPRESSION mod EXPRESSION
     | parA EXPRESSION parC
     | entero
-    | decimal
+    | DECIMAL
+    | logico
+    | caracter
+    | cadena
+    | var_name
+    | CASTING
 ;
+
+DECIMAL : entero punto entero;
+
+/* ASIGNACION */
+ASSIGNMENT : ID igual EXPRESSION;
+
+/* CASTEO */
+CASTING : parA TIPO parC EXPRESSION;
