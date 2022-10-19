@@ -1,12 +1,29 @@
 //Declaracion y Asignacion 
-/*string curso_ = "organización de compiladores 1 2022";
-char var_111 = 'a';
+string curso_ = "organización de compiladores 1 2022";
+char var_111 = 'a'; //"CCC"
 celular = true;
 int var1, var2, var3;
-boolean flag_1, flag2_, flag33 = false;
+boolean flag_1, flag2_, flag33 = 11.1;
 char ch_1, ch_2, ch3, qwert123 = 'M';
 universidad= "usac";
-boolean flag_personalizada;*/
+boolean flag_personalizada;
 
 //Casteo
-double edad = 18.68;
+Int edad = (Int) 18.6; //toma el valor entero de 18
+Int intBool = (Int) false; //false = 0, true = 1
+Int intDecimal = (Int)'0'; // = 0 caracteres numerales de longitud 1
+Int intCadena = (Int) "100"; // = 100 cadena de caracteres de longitud variable
+Double doubleInt = (Double) 16; //16.0
+Double doubleString = (Double) "16.0"; //16.0 Cadenas numericas
+Boolean boolInt = (Boolean) 0; //false
+Boolean boolDouble = (Boolean) 1.0; //true
+Boolean boolString = (Boolean) "0"; //false
+Boolean boolChar = (Boolean) '1'; //true
+Char charInt = (Char) 16; //'1' solo toma el primer carácter
+Char charDouble = (Char) 16.1; //'1' solo toma el primer carácter
+Char charBoolean = (Char) false; //'0' false = '0' true='1'
+Char charString = (Char) "asdf"; //'a' solo toma el primer carácter
+String prueba = (String) "16"; //16
+String stringDouble = (String) "16.1"; //"16.1"
+String stringBoolean = (String) "false"; //"0" false = "0" true="1"
+String stringChar = (String) "av"; //"a"
