@@ -44,7 +44,7 @@ character  (\'([a-zA-Z]|[!-[]|[\]-¿]|\\(\'|[n]|[t]|[r]|\\)|[ ])\')
 ">"                                                     return 'mayor'
 "<"                                                     return 'menor'
 ">="                                                    return 'mayor_igual'
-"<="                                                    return 'menor_igual'
+"{menor}"                                               return 'menor_igual'
 "=="                                                    return 'igual_a'
 "!="                                                    return 'diferente'
 "?"                                                     return 'qn_C'
@@ -57,13 +57,25 @@ character  (\'([a-zA-Z]|[!-[]|[\]-¿]|\\(\'|[n]|[t]|[r]|\\)|[ ])\')
 "("                                                     return 'parA'
 ")"                                                     return 'parC'
 
-";"                                                     return 'ptcoma';
-"{"                                                     return 'llaveA';
-"}"                                                     return 'llaveC';
+";"                                                     return 'ptcoma'
+"{"                                                     return 'llaveA'
+"}"                                                     return 'llaveC'
+"["                                                     return 'corA'
+"]"                                                     return 'corC'
 
-"="                                                     return 'igual';
-(([a-zA-Z])([a-zA-Z]|[0-9]|\_)*)                        return 'var_name';
-","                                                     return 'coma';
+"new"                                                   return 'nuevo'
+
+"if"                                                    return 'if'
+"else"                                                  return 'else'
+"elif"                                                  return 'elif'
+
+"switch"                                                return 'switch'
+"case"                                                  return 'case'
+"default"                                               return 'default'
+
+"="                                                     return 'igual'
+(([a-zA-Z])([a-zA-Z]|[0-9]|\_)*)                        return 'var_name'
+","                                                     return 'coma'
 
 <<EOF>>		                                            return 'EOF'
 
@@ -97,7 +109,13 @@ INSTRUCTIONS : INSTRUCTIONS INSTRUCTION
 
 INSTRUCTION : STATEMENT 'ptcoma'
     | ASSIGNMENT 'ptcoma'
+    | var_name INCDEC 'ptcoma'
+    | VECTOR 'ptcoma'
+    | VECTORMOD 'ptcoma'
+    | IF
+    | SWITCH
     | error { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
+    //| error 'llaveC' { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
 ;
 
 /* DECLARACION */
@@ -123,13 +141,20 @@ EXPRESSION : 'menos' EXPRESSION %prec 'umenos'
     | EXPRESSION 'div' EXPRESSION
     | EXPRESSION 'pot' EXPRESSION
     | EXPRESSION 'mod' EXPRESSION
-    | 'entero'
+    | EXPRESSION INCDEC
+    | GETVALVECTOR
+    | parA EXPRESSION parC
+    | EXP
+    | CASTING
+    | INCDEC
+;
+
+EXP : 'entero'
     | 'logico'
     | 'caracter'
     | 'cadena'
     | 'var_name'
     | DECIMAL
-    | CASTING
 ;
 
 DECIMAL : 'entero' 'punto' 'entero';
@@ -141,6 +166,79 @@ ASSIGNMENT : ID 'igual' EXPRESSION;
 CASTING : 'parA' TIPO 'parC' EXPRESSION;
 
 /* INCREMENTO Y DECREMENTO */
-INCDEC : EXPRESSION 'mas' 'mas'
-    | EXPRESSION 'menos' 'menos'
+INCDEC : 'mas' 'mas'
+    | 'menos' 'menos'
 ;
+
+/* VECTORES */
+VECTOR : TIPO 'corA' 'corC' 'var_name' 'igual' 'nuevo' TIPO 'corA' EXPRESSION 'corC'
+    | TIPO 'corA' 'corC' 'corA' 'corC' 'var_name' 'igual' 'nuevo' TIPO 'corA' EXPRESSION 'corC' 'corA' EXPRESSION 'corC'
+    | TIPO 'corA' 'corC' 'var_name' 'igual' 'llaveA' VECTORVAL 'llaveC'
+    | TIPO 'corA' 'corC' 'corA' 'corC' 'var_name' 'igual' 'llaveA' 'llaveA' VECTORVAL 'llaveC' 'coma' 'llaveA' VECTORVAL 'llaveC' 'llaveC'
+;
+
+VECTORVAL : VECTORVAL 'coma' EXP
+    | EXP
+;
+
+//Obtener el valor de una pos del vector
+GETVALVECTOR : var_name 'corA' EXPRESSION 'corC'
+    | var_name 'corA' EXPRESSION 'corC' 'corA' EXPRESSION 'corC'
+;
+
+/* MODIFICACION VECTORES */
+VECTORMOD : 'var_name' 'corA' EXPRESSION 'corC' 'igual' VALVECTORMOD
+    | 'var_name' 'corA' EXPRESSION 'corC' 'corA' EXPRESSION 'corC' 'igual' VALVECTORMOD
+;
+
+VALVECTORMOD : EXPRESSION
+    | VECTORMOD
+;
+
+/* CONDICIONAL */
+
+IF : 'if' 'parA' CONDITION 'parC' 'llaveA' INSTRUCTIONS 'llaveC' ANIDADO ELSE
+    //| error {console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
+;
+
+ANIDADO : ANIDADO ELIF
+    | //empty
+;
+
+ELIF : 'elif' 'parA' CONDITION 'parC' 'llaveA' INSTRUCTIONS 'llaveC';
+
+ELSE : 'else' 'llaveA' INSTRUCTIONS 'llaveC'
+    | //empty
+;
+
+CONDITION : CONDITION 'or' CONDITION
+    | CONDITION 'and' CONDITION
+    | 'not' CONDITION
+    | REL
+;
+
+REL : EXPRESSION OP_REL EXPRESSION
+    | EXPRESSION
+;
+
+OP_REL : 'mayor'
+    | 'menor'
+    | 'mayor' 'igual'
+    | 'menor' 'igual'
+    | 'igual_a'
+    | 'diferente'
+;
+
+/* SWITCH */
+SWITCH : 'switch' 'parA' EXPRESSION 'parC' 'llaveA' CASELIST 'llaveC'
+    | 'switch' 'parA' EXPRESSION 'parC' 'llaveA' CASELIST DEFAULT 'llaveC'
+    | 'switch' 'parA' EXPRESSION 'parC' 'llaveA' DEFAULT 'llaveC'
+;
+
+CASELIST : CASELIST CASE
+    | CASE
+;
+
+CASE : 'case' EXPRESSION 'colon' INSTRUCTIONS;
+
+DEFAULT : 'default' 'colon' INSTRUCTIONS;
