@@ -121,9 +121,134 @@ int prueba = 15;
 //Println("Tengo 25 anios.");
 // mas sentencias Break;
 default:
+    int prueba = 15;
 //Print("No se que edad tengo. :(\n");
 //mas sentencias Break
 }
 /* Salida esperada Tengo 18 anios.
-No se que edad tengo. :(
+No se que edad tengo.
 */
+
+//Implementar un ciclo while
+while (x<100){
+if (x > 50)
+{
+    int prueba = 15;
+//Print(“Mayor que 50”);
+//Más sentencias
+}
+else
+{
+    int prueba = 15;
+//Print(“Menor que 100”);
+//Más sentencias
+} X++;
+//Más sentencias
+}
+
+//Declaración dentro del for con incremento
+for ( int i=0; i<3;i++ ){
+    int prueba = 15;
+//Println(“i=”+i)
+//más sentencias
+}
+/*RESULTADO
+i=0 i=1 i=2
+*/
+//asignación de variable previamente declarada y decremento por asignación
+Int i;
+for ( i=5; i>2;i=i-1 ){
+    int prueba = 15;
+//Print(“i=”+i+”\n”)
+//más sentencias
+}
+/*RESULTADO
+i=5 i=4 i=3
+*/
+
+//implementar un ciclo do-while Int a=5;
+do{
+if (a>=1 && a <3){
+    int prueba = 15;
+//Println(true)
+}
+else{
+    int prueba = 15;
+//Println(false)
+}
+a--;
+} while (a>0);
+
+//implementar un ciclo do-while Int a=5;
+do{
+if (a>=1 && a <3){
+    int prueba = 15;
+//Println(true)
+}
+else{
+    int prueba = 15;
+//Println(false)
+}
+a--;
+} until (a==0);
+/*RESULTADO
+false false false true true
+*/
+
+//Ejemplo en un ciclo for
+for(int i = 0; i < 9; i++){
+if(i==5){
+    int prueba = 15;
+break;
+}
+//Println(i);
+}
+
+//Ejemplo en un ciclo for
+for(int i = 0; i < 9; i++){
+if(i==5){
+    int prueba = 15;
+//Println("Me salte el numero " + i); continue;
+}
+//Println(i);
+}
+
+//Ejemplos
+//--> Dentro de un metodo
+mi_metodo(): void{
+int i;
+for(i = 0; i < 9; i++){ if(i==5){
+return; //se detiene
+}
+//Print(i);
+}
+}
+//--> Dentro de una función
+sumar(int n1, int n2): int {
+int n3;
+n3 = n1+n2;
+return n3; //retorno el valor
+}
+
+//Ejemplo de declaración de una función de enteros
+conversion (double pies, string tipo): double {
+if (tipo == "metro")
+{
+    int prueba = 15;
+    return pies/3.281;
+}else{
+    int prueba = 15;
+    return -1;
+}
+}
+
+//Ejemplo con tipo definido de un método
+holamundo(): void {
+    int prueba = 15;
+//Print(“Hola mundo”);
+}
+//Ejemplo sin tipo definido de un método
+HolaCompi() {
+    int prueba = 15;
+//Print(“Hola Compi 1”);
+}

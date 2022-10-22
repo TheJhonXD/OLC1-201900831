@@ -73,6 +73,16 @@ character  (\'([a-zA-Z]|[!-[]|[\]-¿]|\\(\'|[n]|[t]|[r]|\\)|[ ])\')
 "case"                                                  return 'case'
 "default"                                               return 'default'
 
+"while"                                                 return 'while'
+"do"                                                    return 'do'
+"until"                                                 return 'until'
+"for"                                                   return 'for'
+"break"                                                 return 'break'
+"continue"                                              return 'continue'
+"return"                                                return 'retornar'
+
+"void"                                                  return 'void'
+
 "="                                                     return 'igual'
 (([a-zA-Z])([a-zA-Z]|[0-9]|\_)*)                        return 'var_name'
 ","                                                     return 'coma'
@@ -114,6 +124,14 @@ INSTRUCTION : STATEMENT 'ptcoma'
     | VECTORMOD 'ptcoma'
     | IF
     | SWITCH
+    | WHILE
+    | FOR
+    | DOWHILE 'ptcoma'
+    | DOUNTIL 'ptcoma'
+    | TRANSFER 'ptcoma'
+    | RETURN 'ptcoma'
+    | FUNC
+    | METHOD
     | error { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
     //| error 'llaveC' { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
 ;
@@ -242,3 +260,45 @@ CASELIST : CASELIST CASE
 CASE : 'case' EXPRESSION 'colon' INSTRUCTIONS;
 
 DEFAULT : 'default' 'colon' INSTRUCTIONS;
+
+/* WHILE */
+WHILE : 'while' 'parA' CONDITION 'parC' 'llaveA' INSTRUCTIONS 'llaveC';
+
+/* FOR */
+FOR : 'for' 'parA' STATEMENT 'ptcoma' CONDITION 'ptcoma' ACTUALIZATION 'parC' 'llaveA' INSTRUCTIONS 'llaveC'
+    | 'for' 'parA' ASSIGNMENT 'ptcoma' CONDITION 'ptcoma' ACTUALIZATION 'parC' 'llaveA' INSTRUCTIONS 'llaveC'
+;
+
+ACTUALIZATION : var_name INCDEC
+    | ASSIGNMENT
+;
+
+/* DO WHILE */
+DOWHILE : 'do' 'llaveA' INSTRUCTIONS 'llaveC' 'while' 'parA' CONDITION 'parC';
+
+/* DO UNTIL */
+DOUNTIL : 'do' 'llaveA' INSTRUCTIONS 'llaveC' 'until' 'parA' CONDITION 'parC';
+
+TRANSFER : 'break'
+    | 'continue'
+;
+
+RETURN : 'retornar' EXPRESSION
+    | 'retornar'
+;
+
+/* FUNCIONES */
+FUNC : 'var_name' 'parA' PARAMETROS 'parC' 'colon' TIPO 'llaveA' INSTRUCTIONS 'llaveC';
+
+PARAMETROS : PARAMS
+    | //empty
+;
+
+PARAMS : PARAMS 'coma' TIPO 'var_name'
+    | TIPO 'var_name'
+;
+
+/* METODOS */
+METHOD : 'var_name' 'parA' PARAMETROS 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS 'llaveC'
+    | 'var_name' 'parA' PARAMETROS 'parC' 'llaveA' INSTRUCTIONS 'llaveC'
+;
