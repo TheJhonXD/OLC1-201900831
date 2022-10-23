@@ -252,3 +252,47 @@ HolaCompi() {
     int prueba = 15;
 //Print(“Hola Compi 1”);
 }
+
+//Ejemplo de llamada de un método
+//Print(“Ejemplo de llamada a método”);
+holamundo();
+/* Salida esperada
+Ejemplo de llamada a método Hola Mundo
+*/
+//Ejemplo de llamada de una función
+//Print(“Ejemplo de llamada a función”);
+Int num = suma(6,5); // a = 11
+//Println(“El valor de a es: ” + a);
+/* Salida esperada
+Ejemplo de llamada a función
+Aquí puede venir cualquier sentencia :D El valor de a es: 11
+*/
+suma(int num1, int num2):int {
+//Println(“Aquí puede venir cualquier sentencia :D”);
+return num1 + num2;
+//Println(“Aquí pueden venir más sentencias, pero no se ejecutarán por la sentencia RETURN D:”); //Print en una línea
+}
+
+//Ejemplo
+Print("Hola mundo!!");
+Print("Sale compi \n" + valor + "!!");
+Print(suma(2,2));
+/*
+Salida Esperada:
+Hola Mundo!!Sale compi
+25!!4
+*/
+// 25 es el valor almacenado en la variable "valor"
+
+//Ejemplo
+Println("Hola mundo!!");
+Println("Sale compi \n" + valor + "!!");
+Println(suma(2,2));
+/*
+Salida Esperada:
+Hola Mundo!!
+Sale compi
+25!!
+4
+*/
+// 25 es el valor almacenado en la variable "valor"

@@ -83,6 +83,20 @@ character  (\'([a-zA-Z]|[!-[]|[\]-¿]|\\(\'|[n]|[t]|[r]|\\)|[ ])\')
 
 "void"                                                  return 'void'
 
+"print"                                                 return 'print'
+"println"                                               return 'println'
+
+"tolower"                                               return 'tolower'
+"toupper"                                               return 'toupper'
+"round"                                                 return 'round'
+"length"                                                return 'length'
+"typeof"                                                return 'typeof'
+"tostring"                                              return 'tostring'
+"tochararray"                                           return 'tochararray'
+"push"                                                  return 'push'
+"pop"                                                   return 'pop'
+"run"                                                   return 'run'
+
 "="                                                     return 'igual'
 (([a-zA-Z])([a-zA-Z]|[0-9]|\_)*)                        return 'var_name'
 ","                                                     return 'coma'
@@ -117,12 +131,25 @@ INSTRUCTIONS : INSTRUCTIONS INSTRUCTION
     | INSTRUCTION
 ;
 
-INSTRUCTION : STATEMENT 'ptcoma'
+INSTRUCTION : SINSCOPE
+    | CONTROL
+    | FUNC 'llaveC'
+    | METHOD 'llaveC'
+    | CALL 'ptcoma'
+    | PRINT 'ptcoma'
+    | PRINTLN 'ptcoma'
+    | error { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
+    //| error 'llaveC' { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
+;
+
+SINSCOPE : STATEMENT 'ptcoma'
     | ASSIGNMENT 'ptcoma'
     | var_name INCDEC 'ptcoma'
     | VECTOR 'ptcoma'
     | VECTORMOD 'ptcoma'
-    | IF
+;
+
+CONTROL : IF
     | SWITCH
     | WHILE
     | FOR
@@ -130,10 +157,10 @@ INSTRUCTION : STATEMENT 'ptcoma'
     | DOUNTIL 'ptcoma'
     | TRANSFER 'ptcoma'
     | RETURN 'ptcoma'
-    | FUNC
+;
+
+CONSCOPE : FUNC
     | METHOD
-    | error { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
-    //| error 'llaveC' { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
 ;
 
 /* DECLARACION */
@@ -165,6 +192,7 @@ EXPRESSION : 'menos' EXPRESSION %prec 'umenos'
     | EXP
     | CASTING
     | INCDEC
+    | CALL
 ;
 
 EXP : 'entero'
@@ -288,7 +316,10 @@ RETURN : 'retornar' EXPRESSION
 ;
 
 /* FUNCIONES */
-FUNC : 'var_name' 'parA' PARAMETROS 'parC' 'colon' TIPO 'llaveA' INSTRUCTIONS 'llaveC';
+FUNC : 'var_name' 'parA' PARAMS 'parC' 'colon' TIPO 'llaveA' INSTRUCTIONS
+    | 'var_name' 'parA' 'parC' 'colon' TIPO 'llaveA' INSTRUCTIONS
+;
+
 
 PARAMETROS : PARAMS
     | //empty
@@ -299,6 +330,23 @@ PARAMS : PARAMS 'coma' TIPO 'var_name'
 ;
 
 /* METODOS */
-METHOD : 'var_name' 'parA' PARAMETROS 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS 'llaveC'
-    | 'var_name' 'parA' PARAMETROS 'parC' 'llaveA' INSTRUCTIONS 'llaveC'
+METHOD : 'var_name' 'parA' PARAMS 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS
+    | 'var_name' 'parA' 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS
+    | 'var_name' 'parA' PARAMS 'parC' 'llaveA' INSTRUCTIONS
+    | 'var_name' 'parA' 'parC' 'llaveA' INSTRUCTIONS
 ;
+
+/* LLAMADA */
+
+CALL : 'var_name' 'parA' PARAMSCALL 'parC'
+    | 'var_name' 'parA' 'parC'
+;
+
+PARAMSCALL : PARAMSCALL 'coma' EXPRESSION
+    | EXPRESSION
+;
+
+/* PRINT Y PRINTLN*/
+PRINT : 'print' 'parA' EXPRESSION 'parC';
+
+PRINTLN : 'println' 'parA' EXPRESSION 'parC';
