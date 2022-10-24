@@ -296,3 +296,74 @@ Sale compi
 4
 */
 // 25 es el valor almacenado en la variable "valor"
+
+//Ejemplo
+string cad_1 = toLower("hOla MunDo"); // cad_1 = "hola mundo"
+string cad_2 = toLower("RESULTADO = " + 100); // cad_2 = "resultado = 100"
+
+//Ejemplo
+string cad_1 = toUpper("hOla MunDo"); // cad_1 = "HOLA MUNDO"
+string cad_2 = toUpper("resultado = " + 100); // cad_2 = "RESULTADO = 100"
+
+// Ejemplo
+Double valor = round(5.8); //valor = 6
+Double valor2 = round(5.4); //valor2 = 5
+
+//Ejemplo
+string[ ] vector2 = {"hola", "Mundo"};
+int tam_vector = length(5); // tam_vector = 2
+int tam_hola = length(tam_vector[0]); // tam_hola = 4
+
+//Ejemplo
+String valor = toString(14); // valor = "14"
+String valor2 = toString(true); // valor = "true"
+
+//Ejemplo
+Int[] lista2 =new int [4];
+String tipo = typeof(15); // tipo = "int"
+String tipo2 = typeof(15.25); // tipo = "double"
+String tipo3 = typeof(lista2);// tipo3 = "vector"
+
+//Ejemplo
+Char[] caracteres = toCharArray("Hola");
+/*
+caracteres [1] = "H"
+caracteres [2] = "o"
+caracteres [3] = "l"
+caracteres [4] = "a"
+*/
+
+//vector de ejemplo
+string[ ] vector2 = {"hola", "Mundo"};
+vector2.push("bonito");
+//contenido del vector
+//= ["hola", "Mundo","bonito"]
+
+//vector de ejemplo
+string[ ] vector2 = {"hola", "Mundo","bonito"};
+vector2.pop();
+//contenido del vector
+//= ["hola", "Mundo"]
+
+//Ejemplo 1 
+funcion1():void{
+Print("hola");
+}
+run funcion1();
+/*RESULTADO
+hola
+*/
+
+//Ejemplo 2
+funcion2(string mensaje):void{
+Print(mensaje);
+}
+Run funcion2("hola soy un mensaje");
+/*RESULTADO
+Hola soy un mensaje
+*/
+
+//Ejemplo del uso del operador ternario 
+int edad = 18;
+Boolean mayoria_edad = false;
+mayoria_edadd = edad > 21 ? true : false;

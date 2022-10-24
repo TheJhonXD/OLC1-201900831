@@ -138,6 +138,9 @@ INSTRUCTION : SINSCOPE
     | CALL 'ptcoma'
     | PRINT 'ptcoma'
     | PRINTLN 'ptcoma'
+    | PUSH 'ptcoma'
+    | POP 'ptcoma'
+    | RUN 'ptcoma'
     | error { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
     //| error 'llaveC' { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
 ;
@@ -159,13 +162,10 @@ CONTROL : IF
     | RETURN 'ptcoma'
 ;
 
-CONSCOPE : FUNC
-    | METHOD
-;
-
 /* DECLARACION */
 STATEMENT : TIPO ID
     | TIPO ID 'igual' EXPRESSION
+    | TIPO ID 'igual' OPTERNARIO
 ;
 
 TIPO : 'int'
@@ -193,6 +193,13 @@ EXPRESSION : 'menos' EXPRESSION %prec 'umenos'
     | CASTING
     | INCDEC
     | CALL
+    | TOLOWER
+    | TOUPPER
+    | ROUND
+    | LENGTH
+    | TOSTRING
+    | TOCHARARRAY
+    | TYPEOF
 ;
 
 EXP : 'entero'
@@ -206,7 +213,9 @@ EXP : 'entero'
 DECIMAL : 'entero' 'punto' 'entero';
 
 /* ASIGNACION */
-ASSIGNMENT : ID 'igual' EXPRESSION;
+ASSIGNMENT : ID 'igual' EXPRESSION
+    | ID 'igual' OPTERNARIO
+;
 
 /* CASTEO */
 CASTING : 'parA' TIPO 'parC' EXPRESSION;
@@ -221,6 +230,7 @@ VECTOR : TIPO 'corA' 'corC' 'var_name' 'igual' 'nuevo' TIPO 'corA' EXPRESSION 'c
     | TIPO 'corA' 'corC' 'corA' 'corC' 'var_name' 'igual' 'nuevo' TIPO 'corA' EXPRESSION 'corC' 'corA' EXPRESSION 'corC'
     | TIPO 'corA' 'corC' 'var_name' 'igual' 'llaveA' VECTORVAL 'llaveC'
     | TIPO 'corA' 'corC' 'corA' 'corC' 'var_name' 'igual' 'llaveA' 'llaveA' VECTORVAL 'llaveC' 'coma' 'llaveA' VECTORVAL 'llaveC' 'llaveC'
+    | TIPO 'corA' 'corC' 'var_name' 'igual' EXPRESSION
 ;
 
 VECTORVAL : VECTORVAL 'coma' EXP
@@ -350,3 +360,27 @@ PARAMSCALL : PARAMSCALL 'coma' EXPRESSION
 PRINT : 'print' 'parA' EXPRESSION 'parC';
 
 PRINTLN : 'println' 'parA' EXPRESSION 'parC';
+
+TOLOWER : 'tolower' 'parA' EXPRESSION 'parC';
+
+TOUPPER : 'toupper' 'parA' EXPRESSION 'parC';
+
+ROUND : 'round' 'parA' 'integer' 'parC'
+    | 'round' 'parA' DECIMAL 'parC'
+;
+
+LENGTH : 'length' 'parA' EXPRESSION 'parC';
+
+TYPEOF : 'typeof' 'parA' EXPRESSION 'parC';
+
+TOSTRING : 'tostring' 'parA' EXPRESSION 'parC';
+
+TOCHARARRAY : 'tochararray' 'parA' EXPRESSION 'parC';
+
+PUSH : 'var_name' 'punto' 'push' 'parA' EXPRESSION 'parC';
+
+POP : 'var_name' 'punto' 'pop' 'parA' 'parC';
+
+RUN : 'run' CALL; 
+
+OPTERNARIO : CONDITION 'qn_C' EXPRESSION 'colon' EXPRESSION;
