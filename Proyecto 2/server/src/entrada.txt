@@ -364,6 +364,6 @@ Hola soy un mensaje
 */
 
 //Ejemplo del uso del operador ternario 
-int edad = 18;z
+int edad = 18;
 Boolean mayoria_edad = false;
 mayoria_edadd = edad > 21 ? true : false;

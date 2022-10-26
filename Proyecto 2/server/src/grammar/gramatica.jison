@@ -1,5 +1,5 @@
 %{
-  //Declarciones y tambien las importaciones
+  const {Statement} = require('../instrucciones/Statement.ts');
 %}
 
 %lex
@@ -119,19 +119,23 @@ character  (\'([a-zA-Z]|[!-[]|[\]-¿]|\\(\'|[n]|[t]|[r]|\\)|[ ])\')
 %left 'multi' 'div'
 %left 'pot' 'mod'
 %left 'parA' 'parC'
-%left 'umenos'
+%left umenos
 
 %start S
 
 %%
 
-S : INSTRUCTIONS EOF { console.log("Analisis terminado") };
+S : INSTRUCTIONS EOF { console.log("Analisis terminado"); return $1; };
 
-INSTRUCTIONS : INSTRUCTIONS INSTRUCTION
-    | INSTRUCTION
+INSTRUCTIONS : INSTRUCTIONS INSTRUCTION { $1.push($2); $$ = $1; }
+    | INSTRUCTION { $$ = [$1]; }
 ;
 
-INSTRUCTION : SINSCOPE
+INSTRUCTION : STATEMENT 'ptcoma' { $$ = $1; }
+    | ASSIGNMENT 'ptcoma'
+    | var_name INCDEC 'ptcoma'
+    | VECTOR 'ptcoma'
+    | VECTORMOD 'ptcoma'
     | CONTROL
     | FUNC 'llaveC'
     | METHOD 'llaveC'
@@ -145,12 +149,12 @@ INSTRUCTION : SINSCOPE
     //| error 'llaveC' { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
 ;
 
-SINSCOPE : STATEMENT 'ptcoma'
-    | ASSIGNMENT 'ptcoma'
-    | var_name INCDEC 'ptcoma'
-    | VECTOR 'ptcoma'
-    | VECTORMOD 'ptcoma'
-;
+// SINSCOPE : STATEMENT 'ptcoma'
+//     | ASSIGNMENT 'ptcoma'
+//     | var_name INCDEC 'ptcoma'
+//     | VECTOR 'ptcoma'
+//     | VECTORMOD 'ptcoma'
+// ;
 
 CONTROL : IF
     | SWITCH
@@ -163,9 +167,9 @@ CONTROL : IF
 ;
 
 /* DECLARACION */
-STATEMENT : TIPO ID
-    | TIPO ID 'igual' EXPRESSION
-    | TIPO ID 'igual' OPTERNARIO
+STATEMENT : TIPO ID { $$ = new Statement(@1.first_line, @1.first_column); }
+    | TIPO ID 'igual' EXPRESSION { $$ = new Statement(@1.first_line, @1.first_column); }
+    | TIPO ID 'igual' OPTERNARIO { $$ = new Statement(@1.first_line, @1.first_column); }
 ;
 
 TIPO : 'int'
