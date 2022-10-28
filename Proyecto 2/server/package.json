@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc",
+    "ndm": "nodemon",
     "dev": "node app.js",
     "jison": "jison ./src/grammar/gramatica.jison && move gramatica.js ./src/grammar/"
   },

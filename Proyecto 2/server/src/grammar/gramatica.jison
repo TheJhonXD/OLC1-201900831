@@ -1,5 +1,11 @@
 %{
-  const {Statement} = require('../instrucciones/Statement.ts');
+    const {Statement} = require('../instrucciones/Statement.ts');
+    const {Assigment} = require('../instrucciones/Assignment.ts');
+    const {Funcion} = require('../instrucciones/Funcion.ts');
+    const {Metodo} = require('../instrucciones/Metodo.ts');
+    const {Aritmetica} = require('../Expresion/Aritmetica.ts');
+    const {IncDec} = require('../instrucciones/Incdec.ts');
+    const {Casteo} = require('../Expresion/Casteo.ts');
 %}
 
 %lex
@@ -132,19 +138,26 @@ INSTRUCTIONS : INSTRUCTIONS INSTRUCTION { $1.push($2); $$ = $1; }
 ;
 
 INSTRUCTION : STATEMENT 'ptcoma' { $$ = $1; }
-    | ASSIGNMENT 'ptcoma'
-    | var_name INCDEC 'ptcoma'
-    | VECTOR 'ptcoma'
-    | VECTORMOD 'ptcoma'
-    | CONTROL
-    | FUNC 'llaveC'
-    | METHOD 'llaveC'
-    | CALL 'ptcoma'
-    | PRINT 'ptcoma'
-    | PRINTLN 'ptcoma'
-    | PUSH 'ptcoma'
-    | POP 'ptcoma'
-    | RUN 'ptcoma'
+    | ASSIGNMENT 'ptcoma' { $$ = $1; }
+    | INCREDECRE 'ptcoma' { $$ = $1; }
+    | VECTOR 'ptcoma' { $$ = $1; }
+    | VECTORMOD 'ptcoma' { $$ = $1; }
+    | IF { $$ = $1; }
+    | SWITCH { $$ = $1; }
+    | WHILE { $$ = $1; }
+    | FOR { $$ = $1; }
+    | DOWHILE 'ptcoma' { $$ = $1; }
+    | DOUNTIL 'ptcoma' { $$ = $1; }
+    | TRANSFER 'ptcoma' { $$ = $1; }
+    | RETURN 'ptcoma' { $$ = $1; }
+    | FUNC 'llaveC' { $$ = $1; }
+    | METHOD 'llaveC' { $$ = $1; }
+    | CALL 'ptcoma' { $$ = $1; }
+    | PRINT 'ptcoma' { $$ = $1; }
+    | PRINTLN 'ptcoma' { $$ = $1; }
+    | PUSH 'ptcoma' { $$ = $1; }
+    | POP 'ptcoma' { $$ = $1; }
+    | RUN 'ptcoma' { $$ = $1; }
     | error { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
     //| error 'llaveC' { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
 ;
@@ -156,77 +169,82 @@ INSTRUCTION : STATEMENT 'ptcoma' { $$ = $1; }
 //     | VECTORMOD 'ptcoma'
 // ;
 
-CONTROL : IF
-    | SWITCH
-    | WHILE
-    | FOR
-    | DOWHILE 'ptcoma'
-    | DOUNTIL 'ptcoma'
-    | TRANSFER 'ptcoma'
-    | RETURN 'ptcoma'
-;
+// CONTROL : IF
+//     | SWITCH
+//     | WHILE
+//     | FOR
+//     | DOWHILE 'ptcoma'
+//     | DOUNTIL 'ptcoma'
+//     | TRANSFER 'ptcoma'
+//     | RETURN 'ptcoma'
+// ;
 
 /* DECLARACION */
-STATEMENT : TIPO ID { $$ = new Statement(@1.first_line, @1.first_column); }
-    | TIPO ID 'igual' EXPRESSION { $$ = new Statement(@1.first_line, @1.first_column); }
-    | TIPO ID 'igual' OPTERNARIO { $$ = new Statement(@1.first_line, @1.first_column); }
+STATEMENT : TIPO ID { $$ = new Statement($1, $2, @1.first_line, @1.first_column); }
+    | TIPO ID 'igual' EXPRESSION { $$ = new Statement($1, $2, @1.first_line, @1.first_column, $4); }
+    | TIPO ID 'igual' OPTERNARIO { $$ = new Statement($1, $2, @1.first_line, @1.first_column, $4); }
 ;
 
-TIPO : 'int'
-    | 'double'
-    | 'boolean'
-    | 'char'
-    | 'string'
+TIPO : 'int' { $$ = $1; }
+    | 'double' { $$ = $1; }
+    | 'boolean' { $$ = $1; }
+    | 'char' { $$ = $1; }
+    | 'string' { $$ = $1; }
 ;
 
-ID : ID 'coma' 'var_name'
-    | 'var_name'
+ID : ID 'coma' 'var_name' { $1.push($3); $$ = $1; }
+    | 'var_name' { $$ = [$1]; }
 ;
 
 EXPRESSION : 'menos' EXPRESSION %prec 'umenos'
-    | EXPRESSION 'mas' EXPRESSION
-    | EXPRESSION 'menos' EXPRESSION
-    | EXPRESSION 'multi' EXPRESSION
-    | EXPRESSION 'div' EXPRESSION
-    | EXPRESSION 'pot' EXPRESSION
-    | EXPRESSION 'mod' EXPRESSION
-    | EXPRESSION INCDEC
-    | GETVALVECTOR
-    | parA EXPRESSION parC
-    | EXP
-    | CASTING
-    | INCDEC
-    | CALL
-    | TOLOWER
-    | TOUPPER
-    | ROUND
-    | LENGTH
-    | TOSTRING
-    | TOCHARARRAY
-    | TYPEOF
+    | EXPRESSION 'mas' EXPRESSION { $$ = new Aritmetica($1, $3, "suma", @1.first_line, @1.first_column); }
+    | EXPRESSION 'menos' EXPRESSION { $$ = new Aritmetica($1, $3, "resta", @1.first_line, @1.first_column); }
+    | EXPRESSION 'multi' EXPRESSION { $$ = new Aritmetica($1, $3, "multiplicacion", @1.first_line, @1.first_column); }
+    | EXPRESSION 'div' EXPRESSION { $$ = new Aritmetica($1, $3, "division", @1.first_line, @1.first_column); }
+    | EXPRESSION 'pot' EXPRESSION { $$ = new Aritmetica($1, $3, "potencia", @1.first_line, @1.first_column); }
+    | EXPRESSION 'mod' EXPRESSION { $$ = new Aritmetica($1, $3, "modulo", @1.first_line, @1.first_column); }
+    | EXPRESSION INCDEC { $$ = $1; }
+    | GETVALVECTOR { $$ = $1; }
+    | parA EXPRESSION parC { $$ = $2; }
+    | EXP { $$ = $1; }
+    | CASTING { $$ = $1; }
+    | INCDEC { $$ = $1; }
+    | CALL { $$ = $1; }
+    | TOLOWER { $$ = $1; }
+    | TOUPPER { $$ = $1; }
+    | ROUND { $$ = $1; }
+    | LENGTH { $$ = $1; }
+    | TOSTRING { $$ = $1; }
+    | TOCHARARRAY { $$ = $1; }
+    | TYPEOF { $$ = $1; }
 ;
 
-EXP : 'entero'
-    | 'logico'
-    | 'caracter'
-    | 'cadena'
-    | 'var_name'
-    | DECIMAL
+EXP : 'entero' { $$ = $1; }
+    | 'logico' { $$ = $1; }
+    | 'caracter' { $$ = $1; }
+    | 'cadena' { $$ = $1; }
+    | 'var_name' { $$ = $1; }
+    | DECIMAL { $$ = $1; }
 ;
 
-DECIMAL : 'entero' 'punto' 'entero';
+DECIMAL : 'entero' 'punto' 'entero' { $$ = $1+$2+$3; }
+;
 
 /* ASIGNACION */
-ASSIGNMENT : ID 'igual' EXPRESSION
-    | ID 'igual' OPTERNARIO
+ASSIGNMENT : ID 'igual' EXPRESSION { $$ = new Assigment($1, $3, @1.first_line, @1.first_column); }
+    | ID 'igual' OPTERNARIO { $$ = new Assigment($1, $3, @1.first_line, @1.first_column); }
 ;
 
 /* CASTEO */
-CASTING : 'parA' TIPO 'parC' EXPRESSION;
+CASTING : 'parA' TIPO 'parC' EXPRESSION { $$ = new Casteo($2, $4, @1.first_line, @1.first_column); }
+;
 
 /* INCREMENTO Y DECREMENTO */
-INCDEC : 'mas' 'mas'
-    | 'menos' 'menos'
+INCREDECRE : 'var_name' INCDEC { $$ = new IncDec($1, $2, @1.first_line, @1.first_column); }
+;
+
+INCDEC : 'mas' 'mas' { $$ = '++'; }
+    | 'menos' 'menos' { $$ = '--'; }
 ;
 
 /* VECTORES */
@@ -330,8 +348,8 @@ RETURN : 'retornar' EXPRESSION
 ;
 
 /* FUNCIONES */
-FUNC : 'var_name' 'parA' PARAMS 'parC' 'colon' TIPO 'llaveA' INSTRUCTIONS
-    | 'var_name' 'parA' 'parC' 'colon' TIPO 'llaveA' INSTRUCTIONS
+FUNC : 'var_name' 'parA' PARAMS 'parC' 'colon' TIPO 'llaveA' INSTRUCTIONS { $$ = new Funcion($6, $1, $8, @1.first_line, @1.first_column); }
+    | 'var_name' 'parA' 'parC' 'colon' TIPO 'llaveA' INSTRUCTIONS { $$ = new Funcion($5, $1, $7, @1.first_line, @1.first_column); }
 ;
 
 
@@ -344,10 +362,10 @@ PARAMS : PARAMS 'coma' TIPO 'var_name'
 ;
 
 /* METODOS */
-METHOD : 'var_name' 'parA' PARAMS 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS
-    | 'var_name' 'parA' 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS
-    | 'var_name' 'parA' PARAMS 'parC' 'llaveA' INSTRUCTIONS
-    | 'var_name' 'parA' 'parC' 'llaveA' INSTRUCTIONS
+METHOD : 'var_name' 'parA' PARAMS 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS { $$ = new Metodo($6, $1, $8, @1.first_line, @1.first_column); }
+    | 'var_name' 'parA' 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS { $$ = new Metodo($5, $1, $7, @1.first_line, @1.first_column); }
+    | 'var_name' 'parA' PARAMS 'parC' 'llaveA' INSTRUCTIONS { $$ = new Metodo("none", $1, $6, @1.first_line, @1.first_column); }
+    | 'var_name' 'parA' 'parC' 'llaveA' INSTRUCTIONS { $$ = new Metodo("none", $1, $5, @1.first_line, @1.first_column); }
 ;
 
 /* LLAMADA */
