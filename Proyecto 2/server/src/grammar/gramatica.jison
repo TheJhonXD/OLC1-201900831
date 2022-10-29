@@ -6,6 +6,11 @@
     const {Aritmetica} = require('../Expresion/Aritmetica.ts');
     const {IncDec} = require('../instrucciones/Incdec.ts');
     const {Casteo} = require('../Expresion/Casteo.ts');
+    const {Vector} = require('../instrucciones/Vector.ts');
+    const {Matriz} = require('../instrucciones/Matriz.ts');
+    const {MatrizInit} = require('../instrucciones/MatrizInit.ts');
+    const {VectorMod} = require('../instrucciones/VectorMod.ts');
+    const {MatrizMod} = require('../instrucciones/MatrizMod.ts');
 %}
 
 %lex
@@ -248,29 +253,43 @@ INCDEC : 'mas' 'mas' { $$ = '++'; }
 ;
 
 /* VECTORES */
-VECTOR : TIPO 'corA' 'corC' 'var_name' 'igual' 'nuevo' TIPO 'corA' EXPRESSION 'corC'
-    | TIPO 'corA' 'corC' 'corA' 'corC' 'var_name' 'igual' 'nuevo' TIPO 'corA' EXPRESSION 'corC' 'corA' EXPRESSION 'corC'
-    | TIPO 'corA' 'corC' 'var_name' 'igual' 'llaveA' VECTORVAL 'llaveC'
-    | TIPO 'corA' 'corC' 'corA' 'corC' 'var_name' 'igual' 'llaveA' 'llaveA' VECTORVAL 'llaveC' 'coma' 'llaveA' VECTORVAL 'llaveC' 'llaveC'
-    | TIPO 'corA' 'corC' 'var_name' 'igual' EXPRESSION
+VECTOR : TIPO 'corA' 'corC' 'var_name' 'igual' 'nuevo' TIPO 'corA' EXPRESSION 'corC' {
+        $$ = new Vector($1, $4, @1.first_line, @1.first_column, $9);
+    }
+    | TIPO 'corA' 'corC' 'corA' 'corC' 'var_name' 'igual' 'nuevo' TIPO 'corA' EXPRESSION 'corC' 'corA' EXPRESSION 'corC' {
+        $$ = new Matriz($1, $6, @1.first_line, @1.first_column, $11, $14);
+    }
+    | TIPO 'corA' 'corC' 'var_name' 'igual' 'llaveA' VECTORVAL 'llaveC' {
+        $$ = new Vector($1, $4, @1.first_line, @1.first_column, $7);
+    }
+    | TIPO 'corA' 'corC' 'corA' 'corC' 'var_name' 'igual' 'llaveA' 'llaveA' VECTORVAL 'llaveC' 'coma' 'llaveA' VECTORVAL 'llaveC' 'llaveC' {
+        $$ = new MatrizInit($1, $6, $10, $14, @1.first_line, @1.first_column);
+    }
+    | TIPO 'corA' 'corC' 'var_name' 'igual' EXPRESSION {
+        $$ = new Vector($1, $4, @1.first_line, @1.first_column, $6);
+    }
 ;
 
-VECTORVAL : VECTORVAL 'coma' EXP
-    | EXP
+VECTORVAL : VECTORVAL 'coma' EXP { $1.push($3); $$ = $1; }
+    | EXP { $$ = [$1]; }
 ;
 
 //Obtener el valor de una pos del vector
-GETVALVECTOR : var_name 'corA' EXPRESSION 'corC'
-    | var_name 'corA' EXPRESSION 'corC' 'corA' EXPRESSION 'corC'
+GETVALVECTOR : var_name 'corA' EXPRESSION 'corC' { $$ = $1 + "[" + $3 + "]"; }
+    | var_name 'corA' EXPRESSION 'corC' 'corA' EXPRESSION 'corC' { $$ = $1 + "[" + $3 + "]" + "[" + $6 + "]"; }
 ;
 
 /* MODIFICACION VECTORES */
-VECTORMOD : 'var_name' 'corA' EXPRESSION 'corC' 'igual' VALVECTORMOD
-    | 'var_name' 'corA' EXPRESSION 'corC' 'corA' EXPRESSION 'corC' 'igual' VALVECTORMOD
+VECTORMOD : 'var_name' 'corA' EXPRESSION 'corC' 'igual' VALVECTORMOD {
+        $$ = new VectorMod($1, $3, @1.first_line, @1.first_column, $6);
+    }
+    | 'var_name' 'corA' EXPRESSION 'corC' 'corA' EXPRESSION 'corC' 'igual' VALVECTORMOD {
+        $$ = new MatrizMod($1, $3, $6, @1.first_line, @1.first_column, $9);
+    }
 ;
 
-VALVECTORMOD : EXPRESSION
-    | VECTORMOD
+VALVECTORMOD : EXPRESSION { $$ = $1; }
+    | VECTORMOD { $$ = $1; }
 ;
 
 /* CONDICIONAL */
