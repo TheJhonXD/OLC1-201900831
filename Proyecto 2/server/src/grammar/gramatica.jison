@@ -11,6 +11,29 @@
     const {MatrizInit} = require('../instrucciones/MatrizInit.ts');
     const {VectorMod} = require('../instrucciones/VectorMod.ts');
     const {MatrizMod} = require('../instrucciones/MatrizMod.ts');
+    const {Condicional} = require('../instrucciones/condicional/condicional.ts');
+    const {C_If} = require('../instrucciones/condicional/If.ts');
+    const {C_Elif} = require('../instrucciones/condicional/elif.ts');
+    const {C_Else} = require('../instrucciones/condicional/else.ts');
+    const {Condicion} = require('../instrucciones/Condicion.ts');
+    const {Relacional} = require('../instrucciones/Relacional.ts');
+    const {Switch} = require('../instrucciones/Switch/Switch.ts');
+    const {Case} = require('../instrucciones/Switch/Case.ts');
+    const {Default} = require('../instrucciones/Switch/Default.ts');
+    const {Mientras} = require('../instrucciones/While.ts');
+    const {CicloFor} = require('../instrucciones/For.ts');
+    const {DoWhile} = require('../instrucciones/DoWhile.ts');
+    const {DoUntil} = require('../instrucciones/DoUntil.ts');
+    const {Llamar} = require('../instrucciones/llamar.ts');
+    const {Print} = require('../instrucciones/nativas/print.ts');
+    const {LowUp} = require('../instrucciones/nativas/lowup.ts');
+    const {Round} = require('../instrucciones/nativas/round.ts');
+    const {Length} = require('../instrucciones/nativas/length.ts');
+    const {Varios} = require('../instrucciones/nativas/varios.ts');
+    const {Push} = require('../instrucciones/nativas/push.ts');
+    const {Pop} = require('../instrucciones/nativas/pop.ts');
+    const {Run} = require('../instrucciones/Run.ts');
+    const {OpTernario} = require('../instrucciones/OpTernario.ts');
 %}
 
 %lex
@@ -294,134 +317,208 @@ VALVECTORMOD : EXPRESSION { $$ = $1; }
 
 /* CONDICIONAL */
 
-IF : 'if' 'parA' CONDITION 'parC' 'llaveA' INSTRUCTIONS 'llaveC' ANIDADO ELSE
-    //| error {console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
+IF : 'if' 'parA' CONDITION 'parC' 'llaveA' INSTRUCTIONS 'llaveC' ANIDADO ELSE {
+        $$ = new Condicional(new C_If($3, $6, @1.first_line, @1.first_column), @1.first_line, @1.first_column, $8, $9);
+    }
+    | 'if' 'parA' CONDITION 'parC' 'llaveA' INSTRUCTIONS 'llaveC' ELSE {
+        $$ = new Condicional(new C_If($3, $6, @1.first_line, @1.first_column), @1.first_line, @1.first_column, undefined, $8);
+    }
 ;
 
-ANIDADO : ANIDADO ELIF
+ANIDADO : ANIDADO ELIF { $1.push($2); $$ = $1; }
+    | ELIF { $$ = [$1]; }
+;
+
+ELIF : 'elif' 'parA' CONDITION 'parC' 'llaveA' INSTRUCTIONS 'llaveC' {
+    $$ = new C_Elif($3, $6, @1.first_line, @1.first_column);
+}
+;
+
+ELSE : 'else' 'llaveA' INSTRUCTIONS 'llaveC' {
+        $$ = new C_Else($3, @1.first_line, @1.first_column);
+    }
     | //empty
 ;
 
-ELIF : 'elif' 'parA' CONDITION 'parC' 'llaveA' INSTRUCTIONS 'llaveC';
-
-ELSE : 'else' 'llaveA' INSTRUCTIONS 'llaveC'
-    | //empty
+CONDITION : CONDITION 'or' CONDITION {
+        $$ = new Condicion($1, $3, $2, @1.first_line, @1.first_column);
+    }
+    | CONDITION 'and' CONDITION {
+        $$ = new Condicion($1, $3, $2, @1.first_line, @1.first_column);
+    }
+    | 'not' CONDITION {
+        $$ = new Condicion(" ", $3, $2, @1.first_line, @1.first_column);
+    }
+    | REL { $$ = $1; }
 ;
 
-CONDITION : CONDITION 'or' CONDITION
-    | CONDITION 'and' CONDITION
-    | 'not' CONDITION
-    | REL
+REL : EXPRESSION OP_REL EXPRESSION {
+        $$ = new Relacional($1, $3, $2, @1.first_line, @1.first_column);
+    }
+    | EXPRESSION { $$ = $1; }
 ;
 
-REL : EXPRESSION OP_REL EXPRESSION
-    | EXPRESSION
-;
-
-OP_REL : 'mayor'
-    | 'menor'
-    | 'mayor' 'igual'
-    | 'menor' 'igual'
-    | 'igual_a'
-    | 'diferente'
+OP_REL : 'mayor' { $$ = $1; }
+    | 'menor' { $$ = $1; }
+    | 'mayor' 'igual' { $$ = $1+$2; }
+    | 'menor' 'igual' { $$ = $1+$2; }
+    | 'igual_a' { $$ = $1; }
+    | 'diferente' { $$ = $1; }
 ;
 
 /* SWITCH */
-SWITCH : 'switch' 'parA' EXPRESSION 'parC' 'llaveA' CASELIST 'llaveC'
-    | 'switch' 'parA' EXPRESSION 'parC' 'llaveA' CASELIST DEFAULT 'llaveC'
-    | 'switch' 'parA' EXPRESSION 'parC' 'llaveA' DEFAULT 'llaveC'
+SWITCH : 'switch' 'parA' EXPRESSION 'parC' 'llaveA' CASELIST 'llaveC' {
+        $$ = new Switch($3, $6, @1.first_line, @1.first_column);
+    }
+    | 'switch' 'parA' EXPRESSION 'parC' 'llaveA' CASELIST DEFAULT 'llaveC' {
+        $$ = new Switch($3, $6, @1.first_line, @1.first_column, $7);
+    }
+    | 'switch' 'parA' EXPRESSION 'parC' 'llaveA' DEFAULT 'llaveC' {
+        $$ = new Switch($3, undefined, @1.first_line, @1.first_column, $6);
+    }
 ;
 
-CASELIST : CASELIST CASE
-    | CASE
+CASELIST : CASELIST CASE { $1.push($2); $$ = $1; }
+    | CASE { $$ = [$1]; }
 ;
 
-CASE : 'case' EXPRESSION 'colon' INSTRUCTIONS;
+CASE : 'case' EXPRESSION 'colon' INSTRUCTIONS {
+    $$ = new Case($2, $4, @1.first_line, @1.first_column);
+}
+;
 
-DEFAULT : 'default' 'colon' INSTRUCTIONS;
+DEFAULT : 'default' 'colon' INSTRUCTIONS {
+    $$ = new Default($3, @1.first_line, @1.first_column);
+}
+;
 
 /* WHILE */
-WHILE : 'while' 'parA' CONDITION 'parC' 'llaveA' INSTRUCTIONS 'llaveC';
-
-/* FOR */
-FOR : 'for' 'parA' STATEMENT 'ptcoma' CONDITION 'ptcoma' ACTUALIZATION 'parC' 'llaveA' INSTRUCTIONS 'llaveC'
-    | 'for' 'parA' ASSIGNMENT 'ptcoma' CONDITION 'ptcoma' ACTUALIZATION 'parC' 'llaveA' INSTRUCTIONS 'llaveC'
+WHILE : 'while' 'parA' CONDITION 'parC' 'llaveA' INSTRUCTIONS 'llaveC' {
+    $$ = new Mientras($3, $6, @1.first_line, @1.first_column);
+}
 ;
 
-ACTUALIZATION : var_name INCDEC
-    | ASSIGNMENT
+/* FOR */
+FOR : 'for' 'parA' STATEMENT 'ptcoma' CONDITION 'ptcoma' ACTUALIZATION 'parC' 'llaveA' INSTRUCTIONS 'llaveC' {
+        $$ = new CicloFor($3, $5, $7, $10, @1.first_line, @1.first_column);
+    }
+    | 'for' 'parA' ASSIGNMENT 'ptcoma' CONDITION 'ptcoma' ACTUALIZATION 'parC' 'llaveA' INSTRUCTIONS 'llaveC' {
+        $$ = new CicloFor($3, $5, $7, $10, @1.first_line, @1.first_column);
+    }
+;
+
+ACTUALIZATION : INCREDECRE { $$ = $1; }
+    | ASSIGNMENT { $$ = $1; }
 ;
 
 /* DO WHILE */
-DOWHILE : 'do' 'llaveA' INSTRUCTIONS 'llaveC' 'while' 'parA' CONDITION 'parC';
-
-/* DO UNTIL */
-DOUNTIL : 'do' 'llaveA' INSTRUCTIONS 'llaveC' 'until' 'parA' CONDITION 'parC';
-
-TRANSFER : 'break'
-    | 'continue'
+DOWHILE : 'do' 'llaveA' INSTRUCTIONS 'llaveC' 'while' 'parA' CONDITION 'parC' {
+    $$ = new DoWhile($3, $7, @1.first_line, @1.first_column);
+}
 ;
 
-RETURN : 'retornar' EXPRESSION
-    | 'retornar'
+/* DO UNTIL */
+DOUNTIL : 'do' 'llaveA' INSTRUCTIONS 'llaveC' 'until' 'parA' CONDITION 'parC' {
+    $$ = new DoUntil($3, $7, @1.first_line, @1.first_column);
+}
+;
+
+TRANSFER : 'break' { $$ = $1; }
+    | 'continue' { $$ = $1; }
+;
+
+RETURN : 'retornar' EXPRESSION { $$ = $1; }
+    | 'retornar' { $$ = $1; }
 ;
 
 /* FUNCIONES */
-FUNC : 'var_name' 'parA' PARAMS 'parC' 'colon' TIPO 'llaveA' INSTRUCTIONS { $$ = new Funcion($6, $1, $8, @1.first_line, @1.first_column); }
+FUNC : 'var_name' 'parA' PARAMS 'parC' 'colon' TIPO 'llaveA' INSTRUCTIONS { $$ = new Funcion($6, $1, $8, @1.first_line, @1.first_column, $3); }
     | 'var_name' 'parA' 'parC' 'colon' TIPO 'llaveA' INSTRUCTIONS { $$ = new Funcion($5, $1, $7, @1.first_line, @1.first_column); }
 ;
 
 
-PARAMETROS : PARAMS
+PARAMETROS : PARAMS { $$ = $1; }
     | //empty
 ;
 
-PARAMS : PARAMS 'coma' TIPO 'var_name'
-    | TIPO 'var_name'
+PARAMS : PARAMS 'coma' TIPO 'var_name' { $1.push($3 + "," + $4); $$ = $1; }
+    | TIPO 'var_name' { $$ = [$1 + "," + $2] }
 ;
 
 /* METODOS */
-METHOD : 'var_name' 'parA' PARAMS 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS { $$ = new Metodo($6, $1, $8, @1.first_line, @1.first_column); }
+METHOD : 'var_name' 'parA' PARAMS 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS { $$ = new Metodo($6, $1, $8, @1.first_line, @1.first_column, $3); }
     | 'var_name' 'parA' 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS { $$ = new Metodo($5, $1, $7, @1.first_line, @1.first_column); }
-    | 'var_name' 'parA' PARAMS 'parC' 'llaveA' INSTRUCTIONS { $$ = new Metodo("none", $1, $6, @1.first_line, @1.first_column); }
+    | 'var_name' 'parA' PARAMS 'parC' 'llaveA' INSTRUCTIONS { $$ = new Metodo("none", $1, $6, @1.first_line, @1.first_column, $3); }
     | 'var_name' 'parA' 'parC' 'llaveA' INSTRUCTIONS { $$ = new Metodo("none", $1, $5, @1.first_line, @1.first_column); }
 ;
 
 /* LLAMADA */
 
-CALL : 'var_name' 'parA' PARAMSCALL 'parC'
-    | 'var_name' 'parA' 'parC'
+CALL : 'var_name' 'parA' PARAMSCALL 'parC' {
+        $$ = new Llamar($1, @1.first_line, @1.first_column, $3);
+    }
+    | 'var_name' 'parA' 'parC' {
+        $$ = new Llamar($1, @1.first_line, @1.first_column);
+    }
 ;
 
-PARAMSCALL : PARAMSCALL 'coma' EXPRESSION
-    | EXPRESSION
+PARAMSCALL : PARAMSCALL 'coma' EXPRESSION { $1.push($3); $$ = $1;}
+    | EXPRESSION { $$ = [$1]; }
 ;
 
 /* PRINT Y PRINTLN*/
-PRINT : 'print' 'parA' EXPRESSION 'parC';
-
-PRINTLN : 'println' 'parA' EXPRESSION 'parC';
-
-TOLOWER : 'tolower' 'parA' EXPRESSION 'parC';
-
-TOUPPER : 'toupper' 'parA' EXPRESSION 'parC';
-
-ROUND : 'round' 'parA' 'integer' 'parC'
-    | 'round' 'parA' DECIMAL 'parC'
+PRINT : 'print' 'parA' EXPRESSION 'parC' {
+    $$ = new Print($1, $3, @1.first_line, @1.first_column);
+}
 ;
 
-LENGTH : 'length' 'parA' EXPRESSION 'parC';
+PRINTLN : 'println' 'parA' EXPRESSION 'parC' {
+    $$ = new Print($1, $3, @1.first_line, @1.first_column);
+}
+;
 
-TYPEOF : 'typeof' 'parA' EXPRESSION 'parC';
+TOLOWER : 'tolower' 'parA' EXPRESSION 'parC' {
+    $$ = new LowUp($1, $3, @1.first_line, @1.first_column);
+}
+;
 
-TOSTRING : 'tostring' 'parA' EXPRESSION 'parC';
+TOUPPER : 'toupper' 'parA' EXPRESSION 'parC' {
+    $$ = new LowUp($1, $3, @1.first_line, @1.first_column);
+}
+;
 
-TOCHARARRAY : 'tochararray' 'parA' EXPRESSION 'parC';
+ROUND : 'round' 'parA' 'integer' 'parC' {
+        $$ = new Round($3, @1.first_line, @1.first_column);
+    }
+    | 'round' 'parA' DECIMAL 'parC' { $$ = new Round($3, @1.first_line, @1.first_column); }
+;
 
-PUSH : 'var_name' 'punto' 'push' 'parA' EXPRESSION 'parC';
+LENGTH : 'length' 'parA' EXPRESSION 'parC' { $$ = new Length($3, @1.first_line, @1.first_column); }
+;
 
-POP : 'var_name' 'punto' 'pop' 'parA' 'parC';
+TYPEOF : 'typeof' 'parA' EXPRESSION 'parC' { $$ = new Varios($1, $3, @1.first_line, @1.first_column); }
+;
 
-RUN : 'run' CALL; 
+TOSTRING : 'tostring' 'parA' EXPRESSION 'parC' { $$ = new Varios($1, $3, @1.first_line, @1.first_column); }
+;
 
-OPTERNARIO : CONDITION 'qn_C' EXPRESSION 'colon' EXPRESSION;
+TOCHARARRAY : 'tochararray' 'parA' EXPRESSION 'parC' { $$ = new Varios($1, $3, @1.first_line, @1.first_column); }
+;
+
+PUSH : 'var_name' 'punto' 'push' 'parA' EXPRESSION 'parC' {
+    $$ = new Push($1, $5, @1.first_line, @1.first_column);
+}
+;
+
+POP : 'var_name' 'punto' 'pop' 'parA' 'parC' {
+    $$ = new Pop($1, @1.first_line, @1.first_column);
+}
+;
+
+RUN : 'run' CALL { $$ = new Run($2, @1.first_line, @1.first_column); }
+; 
+
+OPTERNARIO : CONDITION 'qn_C' EXPRESSION 'colon' EXPRESSION {
+    $$ = new OpTernario($1, $3, $5, @1.first_line, @1.first_column);
+}
+;

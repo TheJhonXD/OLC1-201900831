@@ -1,7 +1,7 @@
 import { Instruction } from "../abstractas/instruccion";
 
 export class Funcion extends Instruction{
-    constructor(public tipo:string, public var_name:string, public instrucciones:any[], line:number, column:number){
+    constructor(public tipo:string, public var_name:string, public instrucciones:any[], line:number, column:number, public params:string[]){
         super(line, column);
     }
 
