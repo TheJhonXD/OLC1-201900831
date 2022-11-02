@@ -22,3 +22,8 @@ app.get('/', (req, res) => {
 app.get('/texto', (req, res) => {
     res.json({ mensaje: "hola mundo!!! c:" });
 });
+
+app.post('/code', (req, res) => {
+    let codigo = req.body.code;
+    res.json({ mensaje: "codigo recibido" });
+});

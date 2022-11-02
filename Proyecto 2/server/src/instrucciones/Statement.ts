@@ -22,7 +22,7 @@ export class Statement extends Instruction{
     }
 
     private unirNodo(first:number, second:number){
-        "\tn" + first + "->" + "n" + second + ";\n";
+        return "\tn" + first + "->" + "n" + second + ";\n";
     }
 
     public getNodo(cont:number):string{

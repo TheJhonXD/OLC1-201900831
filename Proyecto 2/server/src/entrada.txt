@@ -1,9 +1,3 @@
 //Declaracion y Asignacion 
-string curso_ = "organización de compiladores 1 2022";
-char var_111 = 'a'; //"CCC"
-celular = true;
-int var1, var2, var3;
-boolean flag_1, flag2_, flag33 = 11.1;
-char ch_1, ch_2, ch3, qwert123 = 'M';
-universidad= "usac";
+
 boolean flag_personalizada;

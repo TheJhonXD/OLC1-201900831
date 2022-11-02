@@ -8,12 +8,13 @@ function createAST(ast:any) {
     code += "\tins[label=\"Instrucciones\"];\n";
     for (const instruccion of ast) {
         try {
-            instruccion.ejecutar();
+            code += instruccion.getNodo(cont + 1);
         } catch (error) {
             console.log(error);
             
         }
     }
+    console.log(code);
 }
 
 try {
@@ -21,6 +22,9 @@ try {
     console.log("********************** Analisis iniciado **********************");
     const ast = parser.parse(entrada.toString());
     console.log(ast);
+    // console.log("-------------------------");
+    // createAST(ast);
+    // console.log("-------------------------");
 
     for (const instruccion of ast) {
         try {

@@ -12,4 +12,8 @@ export class UserService {
     return this.http.get(`${this.URL}/texto`);
   }
 
+  sendData(json:any){
+    return this.http.post(`${this.URL}/code`, json);
+  }
+
 }

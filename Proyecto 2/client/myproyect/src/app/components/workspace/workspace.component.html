@@ -2,15 +2,15 @@
     <div class="workspace">
         <div class="action-container">
             <div class="filename-container">
-                <input type="file" value="">
+                <input type="file" value="" (change)="readFile($event)">
             </div>
             <div class="btns-container">
-                <button class="btn orange"><i class='bx bx-right-arrow'></i> Run</button>
+                <button class="btn orange" (click)="sendText()"><i class='bx bx-right-arrow'></i> Run</button>
                 <button class="btn dark"><i class='bx bx-terminal'></i> Console</button>
             </div>
         </div>
         <div class="code-area">
-            <textarea class="code" placeholder="//MFM Script editor"></textarea>
+            <textarea class="code" placeholder="//MFM Script editor" id="codigo"></textarea>
         </div>
         <!-- <div class="console-area">
             <textarea name="" id="" placeholder="//Console" readonly></textarea>
