@@ -1,39 +1,41 @@
 %{
-    const {Statement} = require('../instrucciones/Statement.ts');
-    const {Assigment} = require('../instrucciones/Assignment.ts');
-    const {Funcion} = require('../instrucciones/Funcion.ts');
-    const {Metodo} = require('../instrucciones/Metodo.ts');
-    const {Aritmetica} = require('../Expresion/Aritmetica.ts');
-    const {IncDec} = require('../instrucciones/Incdec.ts');
-    const {Casteo} = require('../Expresion/Casteo.ts');
-    const {Vector} = require('../instrucciones/Vector.ts');
-    const {Matriz} = require('../instrucciones/Matriz.ts');
-    const {MatrizInit} = require('../instrucciones/MatrizInit.ts');
-    const {VectorMod} = require('../instrucciones/VectorMod.ts');
-    const {MatrizMod} = require('../instrucciones/MatrizMod.ts');
-    const {Condicional} = require('../instrucciones/condicional/condicional.ts');
-    const {C_If} = require('../instrucciones/condicional/If.ts');
-    const {C_Elif} = require('../instrucciones/condicional/elif.ts');
-    const {C_Else} = require('../instrucciones/condicional/else.ts');
-    const {Condicion} = require('../instrucciones/Condicion.ts');
-    const {Relacional} = require('../instrucciones/Relacional.ts');
-    const {Switch} = require('../instrucciones/Switch/Switch.ts');
-    const {Case} = require('../instrucciones/Switch/Case.ts');
-    const {Default} = require('../instrucciones/Switch/Default.ts');
-    const {Mientras} = require('../instrucciones/While.ts');
-    const {CicloFor} = require('../instrucciones/For.ts');
-    const {DoWhile} = require('../instrucciones/DoWhile.ts');
-    const {DoUntil} = require('../instrucciones/DoUntil.ts');
-    const {Llamar} = require('../instrucciones/llamar.ts');
-    const {Print} = require('../instrucciones/nativas/print.ts');
-    const {LowUp} = require('../instrucciones/nativas/lowup.ts');
-    const {Round} = require('../instrucciones/nativas/round.ts');
-    const {Length} = require('../instrucciones/nativas/length.ts');
-    const {Varios} = require('../instrucciones/nativas/varios.ts');
-    const {Push} = require('../instrucciones/nativas/push.ts');
-    const {Pop} = require('../instrucciones/nativas/pop.ts');
-    const {Run} = require('../instrucciones/Run.ts');
-    const {OpTernario} = require('../instrucciones/OpTernario.ts');
+    const {Statement} = require('../instrucciones/Statement.js');
+    const {Assigment} = require('../instrucciones/Assignment.js');
+    const {Funcion} = require('../instrucciones/Funcion.js');
+    const {Metodo} = require('../instrucciones/Metodo.js');
+    const {Aritmetica} = require('../Expresion/Aritmetica.js');
+    const {IncDec} = require('../instrucciones/Incdec.js');
+    const {Casteo} = require('../Expresion/Casteo.js');
+    const {Vector} = require('../instrucciones/Vector.js');
+    const {Matriz} = require('../instrucciones/Matriz.js');
+    const {MatrizInit} = require('../instrucciones/MatrizInit.js');
+    const {VectorMod} = require('../instrucciones/VectorMod.js');
+    const {MatrizMod} = require('../instrucciones/MatrizMod.js');
+    const {Condicional} = require('../instrucciones/condicional/condicional.js');
+    const {C_If} = require('../instrucciones/condicional/If.js');
+    const {C_Elif} = require('../instrucciones/condicional/elif.js');
+    const {C_Else} = require('../instrucciones/condicional/else.js');
+    const {Condicion} = require('../instrucciones/Condicion.js');
+    const {Relacional} = require('../instrucciones/Relacional.js');
+    const {Switch} = require('../instrucciones/Switch/Switch.js');
+    const {Case} = require('../instrucciones/Switch/Case.js');
+    const {Default} = require('../instrucciones/Switch/Default.js');
+    const {Mientras} = require('../instrucciones/While.js');
+    const {CicloFor} = require('../instrucciones/For.js');
+    const {DoWhile} = require('../instrucciones/DoWhile.js');
+    const {DoUntil} = require('../instrucciones/DoUntil.js');
+    const {Llamar} = require('../instrucciones/llamar.js');
+    const {Print} = require('../instrucciones/nativas/print.js');
+    const {LowUp} = require('../instrucciones/nativas/lowup.js');
+    const {Round} = require('../instrucciones/nativas/round.js');
+    const {Length} = require('../instrucciones/nativas/length.js');
+    const {Varios} = require('../instrucciones/nativas/varios.js');
+    const {Push} = require('../instrucciones/nativas/push.js');
+    const {Pop} = require('../instrucciones/nativas/pop.js');
+    const {Run} = require('../instrucciones/Run.js');
+    const {OpTernario} = require('../instrucciones/OpTernario.js');
+    const {Nodo} = require('../AST/Nodo.js');
+    let cont = 1;
 %}
 
 %lex
@@ -159,7 +161,11 @@ character  (\'([a-zA-Z]|[!-[]|[\]-¿]|\\(\'|[n]|[t]|[r]|\\)|[ ])\')
 
 %%
 
-S : INSTRUCTIONS EOF { console.log("Analisis terminado"); return $1; };
+S : INSTRUCTIONS EOF { 
+        console.log("Analisis terminado"); 
+        return $1; 
+    }
+;
 
 INSTRUCTIONS : INSTRUCTIONS INSTRUCTION { $1.push($2); $$ = $1; }
     | INSTRUCTION { $$ = [$1]; }
@@ -225,12 +231,12 @@ ID : ID 'coma' 'var_name' { $1.push($3); $$ = $1; }
 ;
 
 EXPRESSION : 'menos' EXPRESSION %prec 'umenos'
-    | EXPRESSION 'mas' EXPRESSION { $$ = new Aritmetica($1, $3, "suma", @1.first_line, @1.first_column); }
-    | EXPRESSION 'menos' EXPRESSION { $$ = new Aritmetica($1, $3, "resta", @1.first_line, @1.first_column); }
-    | EXPRESSION 'multi' EXPRESSION { $$ = new Aritmetica($1, $3, "multiplicacion", @1.first_line, @1.first_column); }
-    | EXPRESSION 'div' EXPRESSION { $$ = new Aritmetica($1, $3, "division", @1.first_line, @1.first_column); }
-    | EXPRESSION 'pot' EXPRESSION { $$ = new Aritmetica($1, $3, "potencia", @1.first_line, @1.first_column); }
-    | EXPRESSION 'mod' EXPRESSION { $$ = new Aritmetica($1, $3, "modulo", @1.first_line, @1.first_column); }
+    | EXPRESSION 'mas' EXPRESSION { $$ = new Aritmetica($1, $3, $2, @1.first_line, @1.first_column); }
+    | EXPRESSION 'menos' EXPRESSION { $$ = new Aritmetica($1, $3, $2, @1.first_line, @1.first_column); }
+    | EXPRESSION 'multi' EXPRESSION { $$ = new Aritmetica($1, $3, $2, @1.first_line, @1.first_column); }
+    | EXPRESSION 'div' EXPRESSION { $$ = new Aritmetica($1, $3, $2, @1.first_line, @1.first_column); }
+    | EXPRESSION 'pot' EXPRESSION { $$ = new Aritmetica($1, $3, $2, @1.first_line, @1.first_column); }
+    | EXPRESSION 'mod' EXPRESSION { $$ = new Aritmetica($1, $3, $2, @1.first_line, @1.first_column); }
     | EXPRESSION INCDEC { $$ = $1; }
     | GETVALVECTOR { $$ = $1; }
     | parA EXPRESSION parC { $$ = $2; }

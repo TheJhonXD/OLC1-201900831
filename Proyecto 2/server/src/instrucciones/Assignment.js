@@ -1,49 +1,45 @@
-import { Instruction } from "../abstractas/instruccion";
-
-export class Assigment extends Instruction{
-    public scope:string;
-    public cont:number;
-    public contaux:number;
-    constructor(public var_name:string[], public valor:any, line:number, column:number){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Assigment = void 0;
+const instruccion_1 = require("../abstractas/instruccion");
+class Assigment extends instruccion_1.Instruction {
+    constructor(var_name, valor, line, column) {
         super(line, column);
+        this.var_name = var_name;
+        this.valor = valor;
         this.scope = "none";
         this.cont = 0;
         this.contaux = 0;
     }
-    
-    public ejecutar() {
+    ejecutar() {
         console.log("Asignacion con nombre: \"" + this.var_name + "\" linea " + this.line);
     }
-
-    public setScope(entorno:string) {
+    setScope(entorno) {
         this.scope = entorno;
     }
-
-    public getContador():number{
+    getContador() {
         return this.contaux;
     }
-
-    private createNodoGraph(cont:number, nodoName:string, contendio:string):string{
-        return "\tn" + cont + "[label=\"" + nodoName +"\\n" + contendio + "\"];\n";
+    createNodoGraph(cont, nodoName, contendio) {
+        return "\tn" + cont + "[label=\"" + nodoName + "\\n" + contendio + "\"];\n";
     }
-
-    private unirNodo(first:number, second:number){
+    unirNodo(first, second) {
         return "\tn" + first + "->" + "n" + second + ";\n";
     }
-
-    public getNodo(cont:number):string{
+    getNodo(cont) {
         this.cont = cont;
         this.contaux = cont;
-        let code:string = "";
+        let code = "";
         code += this.createNodoGraph(this.cont, "<Instruccion>", "Declaracion");
         this.contaux++;
         code += this.createNodoGraph(this.contaux, "<Nombre>", this.var_name.toString());
         code += this.unirNodo(this.cont, this.contaux);
         this.contaux++;
-        if (this.valor != undefined){
-            if (typeof this.valor == "object"){
+        if (this.valor != undefined) {
+            if (typeof this.valor == "object") {
                 code += this.valor.getNodo(this.contaux);
-            }else{
+            }
+            else {
                 code += this.createNodoGraph(this.contaux, "", this.valor);
             }
             code += this.unirNodo(this.cont, this.contaux);
@@ -51,3 +47,4 @@ export class Assigment extends Instruction{
         return code;
     }
 }
+exports.Assigment = Assigment;

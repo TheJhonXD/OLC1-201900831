@@ -1,50 +1,46 @@
-import { Expresion } from '../abstractas/Expresion';
-import { Instruction } from '../abstractas/instruccion';
-
-export class Statement extends Instruction{
-    public scope:string;
-    public cont:number;
-    public contaux:number;
-    constructor(public tipo:string, public var_name:string[], line:number, column:number, public valor?:any){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Statement = void 0;
+const instruccion_1 = require("../abstractas/instruccion");
+class Statement extends instruccion_1.Instruction {
+    constructor(tipo, var_name, line, column, valor) {
         super(line, column);
+        this.tipo = tipo;
+        this.var_name = var_name;
+        this.valor = valor;
         this.scope = "none";
         this.cont = 0;
         this.contaux = 0;
     }
-
-    public ejecutar() {
+    ejecutar() {
         console.log("Declaracion de tipo \"" + this.tipo + "\" nombre: \"" + this.var_name + "\"");
     }
-
-    public setScope(entorno:string){
+    setScope(entorno) {
         this.scope = entorno;
     }
-
-    public getContador():number{
+    getContador() {
         return this.contaux;
     }
-
-    private createNodoGraph(cont:number, nodoName:string, contendio:string):string{
-        return "\tn" + cont + "[label=\"" + nodoName +"\\n" + contendio + "\"];\n";
+    createNodoGraph(cont, nodoName, contendio) {
+        return "\tn" + cont + "[label=\"" + nodoName + "\\n" + contendio + "\"];\n";
     }
-
-    private unirNodo(first:number, second:number){
+    unirNodo(first, second) {
         return "\tn" + first + "->" + "n" + second + ";\n";
     }
-
-    public getNodo(cont:number):string{
+    getNodo(cont) {
         this.cont = cont;
         this.contaux = cont;
-        let code:string = "";
+        let code = "";
         code += this.createNodoGraph(this.contaux, "<Instruccion>", "Declaracion");
         this.contaux++;
         code += this.createNodoGraph(this.contaux, "<Nombre><Tipo>", this.var_name + ":" + this.tipo);
         code += this.unirNodo(this.cont, this.contaux);
         this.contaux++;
-        if (this.valor != undefined){
-            if (typeof this.valor == 'object'){
+        if (this.valor != undefined) {
+            if (typeof this.valor == 'object') {
                 code += this.valor.getNodo(this.contaux);
-            }else{
+            }
+            else {
                 code += this.createNodoGraph(this.contaux, "", this.valor);
             }
             code += this.unirNodo(this.cont, this.contaux);
@@ -52,3 +48,4 @@ export class Statement extends Instruction{
         return code;
     }
 }
+exports.Statement = Statement;

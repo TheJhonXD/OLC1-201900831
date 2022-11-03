@@ -1,53 +1,54 @@
-import { Expresion } from '../abstractas/Expresion';
-export class Aritmetica extends Expresion{
-    public cont:number;
-    public contaux:number;
-    constructor(private left:any, private right:any, private tipo:string, line:number, column:number) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Aritmetica = void 0;
+const Expresion_1 = require("../abstractas/Expresion");
+class Aritmetica extends Expresion_1.Expresion {
+    constructor(left, right, tipo, line, column) {
         super(line, column);
+        this.left = left;
+        this.right = right;
+        this.tipo = tipo;
         this.cont = 0;
         this.contaux = 0;
     }
-
-    public ejecutar() {
+    ejecutar() {
         console.log("left: " + this.left + this.tipo + " right: " + this.right);
     }
-
-    public getContador():number{
+    getContador() {
         return this.contaux;
     }
-
-    private createNodoGraph(cont:number, nodoName:string, contendio:string):string{
-        return "\tn" + cont + "[label=\"" + nodoName +" " + contendio + "\"];\n";
+    createNodoGraph(cont, nodoName, contendio) {
+        return "\tn" + cont + "[label=\"" + nodoName + " " + contendio + "\"];\n";
     }
-
-    private unirNodo(first:number, second:number):string{
+    unirNodo(first, second) {
         return "\tn" + first + "->" + "n" + second + ";\n";
     }
-
-    public getNodo(cont:number):string{
+    getNodo(cont) {
         this.cont = cont;
         this.contaux = cont;
-        let code:string = "";
-
+        let code = "";
         code += this.createNodoGraph(this.cont, "", this.tipo);
         this.contaux++;
-        if (typeof this.left == "object"){
+        if (typeof this.left == "object") {
             code += this.left.getNodo(this.contaux);
             code += this.unirNodo(this.cont, this.contaux);
             this.contaux = this.left.getContador();
-        }else{
+        }
+        else {
             code += this.createNodoGraph(this.contaux, "", this.left);
             code += this.unirNodo(this.cont, this.contaux);
         }
         this.contaux++;
-        if (typeof this.right == "object"){
+        if (typeof this.right == "object") {
             code += this.right.getNodo(this.contaux);
             code += this.unirNodo(this.cont, this.contaux);
             this.contaux = this.right.getContador();
-        }else{
+        }
+        else {
             code += this.createNodoGraph(this.contaux, "", this.right);
             code += this.unirNodo(this.cont, this.contaux);
         }
         return code;
     }
 }
+exports.Aritmetica = Aritmetica;

@@ -84,7 +84,10 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
- console.log("Analisis terminado"); return $$[$0-1]; 
+ 
+        console.log("Analisis terminado"); 
+        return $$[$0-1]; 
+    
 break;
 case 2: case 85: case 105:
  $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
@@ -110,23 +113,8 @@ break;
 case 34: case 75:
  $$[$0-2].push($$[$0]); this.$ = $$[$0-2]; 
 break;
-case 37:
- this.$ = new Aritmetica($$[$0-2], $$[$0], "suma", _$[$0-2].first_line, _$[$0-2].first_column); 
-break;
-case 38:
- this.$ = new Aritmetica($$[$0-2], $$[$0], "resta", _$[$0-2].first_line, _$[$0-2].first_column); 
-break;
-case 39:
- this.$ = new Aritmetica($$[$0-2], $$[$0], "multiplicacion", _$[$0-2].first_line, _$[$0-2].first_column); 
-break;
-case 40:
- this.$ = new Aritmetica($$[$0-2], $$[$0], "division", _$[$0-2].first_line, _$[$0-2].first_column); 
-break;
-case 41:
- this.$ = new Aritmetica($$[$0-2], $$[$0], "potencia", _$[$0-2].first_line, _$[$0-2].first_column); 
-break;
-case 42:
- this.$ = new Aritmetica($$[$0-2], $$[$0], "modulo", _$[$0-2].first_line, _$[$0-2].first_column); 
+case 37: case 38: case 39: case 40: case 41: case 42:
+ this.$ = new Aritmetica($$[$0-2], $$[$0], $$[$0-1], _$[$0-2].first_line, _$[$0-2].first_column); 
 break;
 case 63:
  this.$ = $$[$0-2]+$$[$0-1]+$$[$0]; 
@@ -601,41 +589,43 @@ _handle_error:
     return true;
 }};
 
-    const {Statement} = require('../instrucciones/Statement.ts');
-    const {Assigment} = require('../instrucciones/Assignment.ts');
-    const {Funcion} = require('../instrucciones/Funcion.ts');
-    const {Metodo} = require('../instrucciones/Metodo.ts');
-    const {Aritmetica} = require('../Expresion/Aritmetica.ts');
-    const {IncDec} = require('../instrucciones/Incdec.ts');
-    const {Casteo} = require('../Expresion/Casteo.ts');
-    const {Vector} = require('../instrucciones/Vector.ts');
-    const {Matriz} = require('../instrucciones/Matriz.ts');
-    const {MatrizInit} = require('../instrucciones/MatrizInit.ts');
-    const {VectorMod} = require('../instrucciones/VectorMod.ts');
-    const {MatrizMod} = require('../instrucciones/MatrizMod.ts');
-    const {Condicional} = require('../instrucciones/condicional/condicional.ts');
-    const {C_If} = require('../instrucciones/condicional/If.ts');
-    const {C_Elif} = require('../instrucciones/condicional/elif.ts');
-    const {C_Else} = require('../instrucciones/condicional/else.ts');
-    const {Condicion} = require('../instrucciones/Condicion.ts');
-    const {Relacional} = require('../instrucciones/Relacional.ts');
-    const {Switch} = require('../instrucciones/Switch/Switch.ts');
-    const {Case} = require('../instrucciones/Switch/Case.ts');
-    const {Default} = require('../instrucciones/Switch/Default.ts');
-    const {Mientras} = require('../instrucciones/While.ts');
-    const {CicloFor} = require('../instrucciones/For.ts');
-    const {DoWhile} = require('../instrucciones/DoWhile.ts');
-    const {DoUntil} = require('../instrucciones/DoUntil.ts');
-    const {Llamar} = require('../instrucciones/llamar.ts');
-    const {Print} = require('../instrucciones/nativas/print.ts');
-    const {LowUp} = require('../instrucciones/nativas/lowup.ts');
-    const {Round} = require('../instrucciones/nativas/round.ts');
-    const {Length} = require('../instrucciones/nativas/length.ts');
-    const {Varios} = require('../instrucciones/nativas/varios.ts');
-    const {Push} = require('../instrucciones/nativas/push.ts');
-    const {Pop} = require('../instrucciones/nativas/pop.ts');
-    const {Run} = require('../instrucciones/Run.ts');
-    const {OpTernario} = require('../instrucciones/OpTernario.ts');
+    const {Statement} = require('../instrucciones/Statement.js');
+    const {Assigment} = require('../instrucciones/Assignment.js');
+    const {Funcion} = require('../instrucciones/Funcion.js');
+    const {Metodo} = require('../instrucciones/Metodo.js');
+    const {Aritmetica} = require('../Expresion/Aritmetica.js');
+    const {IncDec} = require('../instrucciones/Incdec.js');
+    const {Casteo} = require('../Expresion/Casteo.js');
+    const {Vector} = require('../instrucciones/Vector.js');
+    const {Matriz} = require('../instrucciones/Matriz.js');
+    const {MatrizInit} = require('../instrucciones/MatrizInit.js');
+    const {VectorMod} = require('../instrucciones/VectorMod.js');
+    const {MatrizMod} = require('../instrucciones/MatrizMod.js');
+    const {Condicional} = require('../instrucciones/condicional/condicional.js');
+    const {C_If} = require('../instrucciones/condicional/If.js');
+    const {C_Elif} = require('../instrucciones/condicional/elif.js');
+    const {C_Else} = require('../instrucciones/condicional/else.js');
+    const {Condicion} = require('../instrucciones/Condicion.js');
+    const {Relacional} = require('../instrucciones/Relacional.js');
+    const {Switch} = require('../instrucciones/Switch/Switch.js');
+    const {Case} = require('../instrucciones/Switch/Case.js');
+    const {Default} = require('../instrucciones/Switch/Default.js');
+    const {Mientras} = require('../instrucciones/While.js');
+    const {CicloFor} = require('../instrucciones/For.js');
+    const {DoWhile} = require('../instrucciones/DoWhile.js');
+    const {DoUntil} = require('../instrucciones/DoUntil.js');
+    const {Llamar} = require('../instrucciones/llamar.js');
+    const {Print} = require('../instrucciones/nativas/print.js');
+    const {LowUp} = require('../instrucciones/nativas/lowup.js');
+    const {Round} = require('../instrucciones/nativas/round.js');
+    const {Length} = require('../instrucciones/nativas/length.js');
+    const {Varios} = require('../instrucciones/nativas/varios.js');
+    const {Push} = require('../instrucciones/nativas/push.js');
+    const {Pop} = require('../instrucciones/nativas/pop.js');
+    const {Run} = require('../instrucciones/Run.js');
+    const {OpTernario} = require('../instrucciones/OpTernario.js');
+    const {Nodo} = require('../AST/Nodo.js');
+    let cont = 1;
 /* generated by jison-lex 0.3.4 */
 var lexer = (function(){
 var lexer = ({

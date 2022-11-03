@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
+import { wasmFolder } from '@hpcc-js/wasm';
+import { graphviz } from 'd3-graphviz';
+// import '../../../../node_modules/d3/dist/d3.js';
 
 @Component({
   selector: 'app-workspace',
@@ -43,6 +46,11 @@ export class WorkspaceComponent implements OnInit {
       }
     );
     //console.log(this.prueba);
+  }
+
+  dGraph(){
+    wasmFolder('/client/myproyect/src/assets');
+    graphviz('#graph').renderDot('digraph {node[shape=\"box\" style="rounded" fontname="Helvetica"] n1497[label="Global"];n1494[label="tinicio = inicio"];n1497->n1494;}')
   }
 
 }
