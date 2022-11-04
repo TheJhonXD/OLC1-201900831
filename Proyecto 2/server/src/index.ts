@@ -1,3 +1,5 @@
+import { Singleton } from './Patron/singleton';
+let instr:Singleton = Singleton.getInstance();
 let express = require('express');
 const ruta = express.Router();
 
@@ -23,15 +25,9 @@ function createAST(ast:any) {
     console.log(code);
 }
 
-function execute(codigo:string){
+function TablaSimbolos(ast:any){
     try {
         // const entrada = fs.readFileSync("src/entrada.txt");
-        console.log("********************** Analisis iniciado **********************");
-        const ast = parser.parse(codigo.toString());
-        console.log(ast);
-        // console.log("-------------------------");
-        // createAST(ast);
-        // console.log("-------------------------");
         for (const instruccion of ast) {
             try {
                 instruccion.ejecutar();
@@ -40,7 +36,6 @@ function execute(codigo:string){
                 console.log(error);
             }
         }
-        console.log("***************************************************************");
     }
     catch (error) {
         console.log(error);
@@ -52,8 +47,13 @@ ruta.post("/code", (req:any, res:any) => {
     //console.log(codigo);
     try{
         const ast = parser.parse(codigo.toString());
+        instr.limpiar();
+        instr.setAst(ast);
         console.log(ast);
         createAST(ast);
+        console.log("************* AST Generado *************");
+        TablaSimbolos(ast);
+        console.log("************* Tabla de Simbolos Generado *************");
     }catch (error){
         console.log(error);
     }

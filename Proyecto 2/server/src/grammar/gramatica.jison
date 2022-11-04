@@ -35,6 +35,9 @@
     const {Run} = require('../instrucciones/Run.js');
     const {OpTernario} = require('../instrucciones/OpTernario.js');
     const {Nodo} = require('../AST/Nodo.js');
+    const {Error_} = require('../Error/Error_.js');
+    const {Simbolo} = require('../TSimbolos/TablaSimbolos.js');
+    const {Singleton} = require('../Patron/singleton.js');
     let cont = 1;
 %}
 
@@ -59,7 +62,7 @@ character  (\'([a-zA-Z]|[!-[]|[\]-¿]|\\(\'|[n]|[t]|[r]|\\)|[ ])\')
 {integer}                                               return 'entero' 
 {bool}                                                  return 'logico'
 {character}                                             return 'caracter'
-{str}                                                   return 'cadena' 
+{str}                                                   {yytext = yytext.substr(1,yyleng-2); return 'cadena'} 
 
 
 "."                                                     return 'punto'
@@ -141,6 +144,7 @@ character  (\'([a-zA-Z]|[!-[]|[\]-¿]|\\(\'|[n]|[t]|[r]|\\)|[ ])\')
 
 
 .   { 
+        Singleton.listaError.push(new Error_("Léxico", "El caracter \"" + yytext + "\" no pertenece al lenguaje", yylloc.first_line, yylloc.first_column));
         console.error("Error lexico: " + yytext + " en la linea: " + yylloc.first_line + " columna: " + yylloc.first_column)
     }
 
@@ -192,7 +196,10 @@ INSTRUCTION : STATEMENT 'ptcoma' { $$ = $1; }
     | PUSH 'ptcoma' { $$ = $1; }
     | POP 'ptcoma' { $$ = $1; }
     | RUN 'ptcoma' { $$ = $1; }
-    | error { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
+    | error {
+        Singleton.listaError.push(new Error_("Sintáctico", "Token no valido \"" + yytext + "\"", this._$.first_line, this._$.first_line));
+        console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);
+    }
     //| error 'llaveC' { console.error('Error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ' columna: ' + this._$.first_column);}
 ;
 
@@ -214,7 +221,9 @@ INSTRUCTION : STATEMENT 'ptcoma' { $$ = $1; }
 // ;
 
 /* DECLARACION */
-STATEMENT : TIPO ID { $$ = new Statement($1, $2, @1.first_line, @1.first_column); }
+STATEMENT : TIPO ID {
+        $$ = new Statement($1, $2, @1.first_line, @1.first_column); 
+    }
     | TIPO ID 'igual' EXPRESSION { $$ = new Statement($1, $2, @1.first_line, @1.first_column, $4); }
     | TIPO ID 'igual' OPTERNARIO { $$ = new Statement($1, $2, @1.first_line, @1.first_column, $4); }
 ;
@@ -289,7 +298,7 @@ VECTOR : TIPO 'corA' 'corC' 'var_name' 'igual' 'nuevo' TIPO 'corA' EXPRESSION 'c
         $$ = new Matriz($1, $6, @1.first_line, @1.first_column, $11, $14);
     }
     | TIPO 'corA' 'corC' 'var_name' 'igual' 'llaveA' VECTORVAL 'llaveC' {
-        $$ = new Vector($1, $4, @1.first_line, @1.first_column, $7);
+        $$ = new Vector($1, $4, @1.first_line, @1.first_column, undefined, $7);
     }
     | TIPO 'corA' 'corC' 'corA' 'corC' 'var_name' 'igual' 'llaveA' 'llaveA' VECTORVAL 'llaveC' 'coma' 'llaveA' VECTORVAL 'llaveC' 'llaveC' {
         $$ = new MatrizInit($1, $6, $10, $14, @1.first_line, @1.first_column);
@@ -447,15 +456,15 @@ PARAMETROS : PARAMS { $$ = $1; }
     | //empty
 ;
 
-PARAMS : PARAMS 'coma' TIPO 'var_name' { $1.push($3 + "," + $4); $$ = $1; }
+PARAMS : PARAMS 'coma' TIPO 'var_name' { $1.push($3 + ":" + $4); $$ = $1; }
     | TIPO 'var_name' { $$ = [$1 + "," + $2] }
 ;
 
 /* METODOS */
 METHOD : 'var_name' 'parA' PARAMS 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS { $$ = new Metodo($6, $1, $8, @1.first_line, @1.first_column, $3); }
     | 'var_name' 'parA' 'parC' 'colon' 'void' 'llaveA' INSTRUCTIONS { $$ = new Metodo($5, $1, $7, @1.first_line, @1.first_column); }
-    | 'var_name' 'parA' PARAMS 'parC' 'llaveA' INSTRUCTIONS { $$ = new Metodo("none", $1, $6, @1.first_line, @1.first_column, $3); }
-    | 'var_name' 'parA' 'parC' 'llaveA' INSTRUCTIONS { $$ = new Metodo("none", $1, $5, @1.first_line, @1.first_column); }
+    | 'var_name' 'parA' PARAMS 'parC' 'llaveA' INSTRUCTIONS { $$ = new Metodo("void", $1, $6, @1.first_line, @1.first_column, $3); }
+    | 'var_name' 'parA' 'parC' 'llaveA' INSTRUCTIONS { $$ = new Metodo("void", $1, $5, @1.first_line, @1.first_column); }
 ;
 
 /* LLAMADA */

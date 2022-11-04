@@ -5,6 +5,6 @@ export abstract class Instruction{
         this.column = column;
     }
 
-    public abstract ejecutar():any;
+    public abstract ejecutar(env?:string):any;
 
 }

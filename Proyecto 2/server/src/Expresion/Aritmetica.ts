@@ -17,7 +17,7 @@ export class Aritmetica extends Expresion{
     }
 
     private createNodoGraph(cont:number, nodoName:string, contendio:string):string{
-        return "\tn" + cont + "[label=\"" + nodoName +" " + contendio + "\"];\n";
+        return "\tn" + cont + "[label=\"" + nodoName +"\\n" + contendio + "\"];\n";
     }
 
     private unirNodo(first:number, second:number):string{

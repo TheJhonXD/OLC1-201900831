@@ -18,7 +18,7 @@ class Aritmetica extends Expresion_1.Expresion {
         return this.contaux;
     }
     createNodoGraph(cont, nodoName, contendio) {
-        return "\tn" + cont + "[label=\"" + nodoName + " " + contendio + "\"];\n";
+        return "\tn" + cont + "[label=\"" + nodoName + "\\n" + contendio + "\"];\n";
     }
     unirNodo(first, second) {
         return "\tn" + first + "->" + "n" + second + ";\n";

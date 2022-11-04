@@ -11,8 +11,8 @@ class Assigment extends instruccion_1.Instruction {
         this.cont = 0;
         this.contaux = 0;
     }
-    ejecutar() {
-        console.log("Asignacion con nombre: \"" + this.var_name + "\" linea " + this.line);
+    ejecutar(env) {
+        //console.log("Asignacion con nombre: \"" + this.var_name + "\" linea " + this.line);
     }
     setScope(entorno) {
         this.scope = entorno;
@@ -30,7 +30,7 @@ class Assigment extends instruccion_1.Instruction {
         this.cont = cont;
         this.contaux = cont;
         let code = "";
-        code += this.createNodoGraph(this.cont, "<Instruccion>", "Declaracion");
+        code += this.createNodoGraph(this.cont, "<Instruccion>", "Assignacion");
         this.contaux++;
         code += this.createNodoGraph(this.contaux, "<Nombre>", this.var_name.toString());
         code += this.unirNodo(this.cont, this.contaux);
@@ -38,11 +38,13 @@ class Assigment extends instruccion_1.Instruction {
         if (this.valor != undefined) {
             if (typeof this.valor == "object") {
                 code += this.valor.getNodo(this.contaux);
+                code += this.unirNodo(this.cont, this.contaux);
+                this.contaux = this.valor.getContador();
             }
             else {
                 code += this.createNodoGraph(this.contaux, "", this.valor);
+                code += this.unirNodo(this.cont, this.contaux);
             }
-            code += this.unirNodo(this.cont, this.contaux);
         }
         return code;
     }

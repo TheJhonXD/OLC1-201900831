@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Statement = void 0;
 const instruccion_1 = require("../abstractas/instruccion");
+const singleton_1 = require("../Patron/singleton");
+const TablaSimbolos_1 = require("../TSimbolos/TablaSimbolos");
 class Statement extends instruccion_1.Instruction {
     constructor(tipo, var_name, line, column, valor) {
         super(line, column);
@@ -12,8 +14,16 @@ class Statement extends instruccion_1.Instruction {
         this.cont = 0;
         this.contaux = 0;
     }
-    ejecutar() {
-        console.log("Declaracion de tipo \"" + this.tipo + "\" nombre: \"" + this.var_name + "\"");
+    ejecutar(env) {
+        for (const i of this.var_name) {
+            if (env != undefined) {
+                singleton_1.Singleton.tablaSimbolos.push(new TablaSimbolos_1.Simbolo(i, "Variable", this.tipo, env, this.line, this.column));
+            }
+            else {
+                singleton_1.Singleton.tablaSimbolos.push(new TablaSimbolos_1.Simbolo(i, "Variable", this.tipo, "-", this.line, this.column));
+            }
+        }
+        // console.log("Declaracion de tipo \"" + this.tipo + "\" nombre: \"" + this.var_name + "\"");
     }
     setScope(entorno) {
         this.scope = entorno;
@@ -39,11 +49,13 @@ class Statement extends instruccion_1.Instruction {
         if (this.valor != undefined) {
             if (typeof this.valor == 'object') {
                 code += this.valor.getNodo(this.contaux);
+                code += this.unirNodo(this.cont, this.contaux);
+                this.contaux = this.valor.getContador();
             }
             else {
                 code += this.createNodoGraph(this.contaux, "", this.valor);
+                code += this.unirNodo(this.cont, this.contaux);
             }
-            code += this.unirNodo(this.cont, this.contaux);
         }
         return code;
     }

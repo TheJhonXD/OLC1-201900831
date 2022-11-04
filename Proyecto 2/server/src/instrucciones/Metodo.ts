@@ -1,11 +1,79 @@
 import { Instruction } from "../abstractas/instruccion";
+import { Singleton } from "../Patron/singleton";
+import { Simbolo } from "../TSimbolos/TablaSimbolos";
 
 export class Metodo extends Instruction{
+    public scope:string;
+    public cont:number;
+    public contaux:number;
     constructor(public tipo:string, public var_name:string, public instrucciones:any[], line:number, column:number, public params:string[]){
         super(line, column);
+        this.cont = 0;
+        this.contaux = 0;
+        this.scope = "-";
     }
 
-    public ejecutar() {
-        console.log("Metodo con nombre \"" + this.var_name + "\" en la linea " + this.line);
+    public ejecutar(env?:string) {
+        // console.log("Metodo con nombre \"" + this.var_name + "\" en la linea " + this.line);
+        Singleton.tablaSimbolos.push(new Simbolo(this.var_name, "Método", this.tipo, this.scope, this.line, this.column));
+        for (const ins of this.instrucciones){
+            if (typeof ins == "object"){
+                ins.ejecutar("Método " + this.var_name);
+            }
+        }
     }
+
+    public getContador():number{
+        return this.contaux;
+    }
+
+    private createNodoGraph(cont:number, nodoName:string, contendio:string):string{
+        return "\tn" + cont + "[label=\"" + nodoName +"\\n" + contendio + "\"];\n";
+    }
+
+    private unirNodo(first:number, second:number):string{
+        return "\tn" + first + "->" + "n" + second + ";\n";
+    }
+
+    public getNodo(cont:number):string{
+        this.cont = cont;
+        this.contaux = cont;
+        let code:string = "";
+
+        code += this.createNodoGraph(this.cont, "<Instruccion>", "Metodo");
+        this.contaux++;
+        //Tipo
+        code += this.createNodoGraph(this.contaux, "<Tipo>", this.tipo);
+        code += this.unirNodo(this.cont, this.contaux);
+        this.contaux++;
+        //Nombre variable
+        code += this.createNodoGraph(this.contaux, "<Nombre>", this.var_name);
+        code += this.unirNodo(this.cont, this.contaux);
+        this.contaux++;
+        //Parametros
+        if (this.params != undefined){
+            code += this.createNodoGraph(this.contaux, "<Parametros>", this.params.toString());
+            code += this.unirNodo(this.cont, this.contaux);
+        }
+        //instrucciones
+        this.contaux++;
+        code += this.createNodoGraph(this.contaux, "<Lista instrucciones>", "");
+        code += this.unirNodo(this.cont, this.contaux);
+        let auxiliar = this.contaux;
+        for (const ins of this.instrucciones) {
+            try {
+                if (typeof ins == "object"){
+                    code += ins.getNodo(this.contaux + 1);
+                    code += this.unirNodo(auxiliar, this.contaux + 1);
+                    this.contaux = ins.getContador();
+                }
+                this.contaux++;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        return code;
+    }
+
 }

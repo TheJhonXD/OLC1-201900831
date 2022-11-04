@@ -1,4 +1,7 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const singleton_1 = require("./Patron/singleton");
+let instr = singleton_1.Singleton.getInstance();
 let express = require('express');
 const ruta = express.Router();
 const parser = require('./grammar/gramatica.js');
@@ -21,15 +24,9 @@ function createAST(ast) {
     code += "}";
     console.log(code);
 }
-function execute(codigo) {
+function TablaSimbolos(ast) {
     try {
         // const entrada = fs.readFileSync("src/entrada.txt");
-        console.log("********************** Analisis iniciado **********************");
-        const ast = parser.parse(codigo.toString());
-        console.log(ast);
-        // console.log("-------------------------");
-        // createAST(ast);
-        // console.log("-------------------------");
         for (const instruccion of ast) {
             try {
                 instruccion.ejecutar();
@@ -38,7 +35,6 @@ function execute(codigo) {
                 console.log(error);
             }
         }
-        console.log("***************************************************************");
     }
     catch (error) {
         console.log(error);
@@ -49,8 +45,13 @@ ruta.post("/code", (req, res) => {
     //console.log(codigo);
     try {
         const ast = parser.parse(codigo.toString());
+        instr.limpiar();
+        instr.setAst(ast);
         console.log(ast);
         createAST(ast);
+        console.log("************* AST Generado *************");
+        TablaSimbolos(ast);
+        console.log("************* Tabla de Simbolos Generado *************");
     }
     catch (error) {
         console.log(error);

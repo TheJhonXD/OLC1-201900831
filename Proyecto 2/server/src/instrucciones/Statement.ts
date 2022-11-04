@@ -1,5 +1,7 @@
 import { Expresion } from '../abstractas/Expresion';
 import { Instruction } from '../abstractas/instruccion';
+import { Singleton } from '../Patron/singleton';
+import { Simbolo } from '../TSimbolos/TablaSimbolos';
 
 export class Statement extends Instruction{
     public scope:string;
@@ -12,8 +14,15 @@ export class Statement extends Instruction{
         this.contaux = 0;
     }
 
-    public ejecutar() {
-        console.log("Declaracion de tipo \"" + this.tipo + "\" nombre: \"" + this.var_name + "\"");
+    public ejecutar(env?:string) {
+        for (const i of this.var_name){
+            if (env != undefined){
+                Singleton.tablaSimbolos.push(new Simbolo(i, "Variable", this.tipo, env, this.line, this.column));
+            }else{
+                Singleton.tablaSimbolos.push(new Simbolo(i, "Variable", this.tipo, "-", this.line, this.column));
+            }
+        }
+        // console.log("Declaracion de tipo \"" + this.tipo + "\" nombre: \"" + this.var_name + "\"");
     }
 
     public setScope(entorno:string){
@@ -44,10 +53,12 @@ export class Statement extends Instruction{
         if (this.valor != undefined){
             if (typeof this.valor == 'object'){
                 code += this.valor.getNodo(this.contaux);
+                code += this.unirNodo(this.cont, this.contaux);
+                this.contaux = this.valor.getContador();
             }else{
                 code += this.createNodoGraph(this.contaux, "", this.valor);
+                code += this.unirNodo(this.cont, this.contaux);
             }
-            code += this.unirNodo(this.cont, this.contaux);
         }
         return code;
     }
