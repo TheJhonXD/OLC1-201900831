@@ -12,16 +12,4 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
-  getData(){
-    this.service.getData().subscribe(
-      (res) => {
-        console.log(res);
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
-
 }

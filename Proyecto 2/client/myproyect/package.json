@@ -18,7 +18,7 @@
     "@angular/platform-browser": "^14.2.0",
     "@angular/platform-browser-dynamic": "^14.2.0",
     "@angular/router": "^14.2.0",
-    "@hpcc-js/wasm": "^1.19.0",
+    "@hpcc-js/wasm": "^1.19.1",
     "d3-graphviz": "^4.4.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

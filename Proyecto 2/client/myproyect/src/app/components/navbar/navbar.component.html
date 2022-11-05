@@ -7,19 +7,41 @@
             <li class="navbar-item">
                 <a href="#">File <i class='bx bxs-chevron-down arrow-icon'></i></a>
                 <ul class="dropdown">
-                    <li class="dp-item"><a href="#">Crear archivo</a></li>
+                    <li class="dp-item" (click)="limpiar($event)"><a href="#">Crear archivo</a></li>
                     <li class="dp-item"><a href="#">Abrir archivo</a></li>
-                    <li class="dp-item"><a href="#">Guardar archivo</a></li>
+                    <li class="dp-item" (click)="downloadFile($event)"><a href="#">Guardar archivo</a></li>
                 </ul>
             </li>
             <li class="navbar-item">
                 <a href="#">Reportes <i class='bx bxs-chevron-down arrow-icon'></i></a>
                 <ul class="dropdown">
-                    <li class="dp-item"><a href="#">Errores</a></li>
-                    <li class="dp-item"><a href="#">Generar AST</a></li>
-                    <li class="dp-item"><a href="#">Tabla de simbolos</a></li>
+                    <li class="dp-item" (click)="getListaError($event)"><a href="#">Errores</a></li>
+                    <li class="dp-item" (click)="getAST($event)"><a href="#">Generar AST</a></li>
+                    <li class="dp-item" (click)="getTablaSimbolo($event)"><a href="#">Tabla de simbolos</a></li>
+                </ul>
+            </li>
+            <li class="navbar-item">
+                <a href="#">Manuales <i class='bx bxs-chevron-down arrow-icon'></i></a>
+                <ul class="dropdown">
+                    <li class="dp-item"><a href="/Manuales/Manual de usuario.pdf">Manual Usuario</a></li>
+                    <li class="dp-item"><a href="#">Manual Técnico</a></li>
                 </ul>
             </li>
         </ul>
     </div>
 </nav>
+<div class="tabla" *ngIf="element == true">
+    <p>Tabla de {{ nombre }} </p>
+    <table *ngIf="valores">
+        <thead>
+            <tr>
+                <th *ngFor="let h of cabecera"> {{ h }} </th>
+            </tr>
+        </thead>
+        <tr *ngFor="let lista of valores">
+          <td *ngFor="let i of lista"> {{ i }} </td>
+        </tr>
+      </table>
+</div>
+<div id="graph" style="text-align: center;">
+</div>

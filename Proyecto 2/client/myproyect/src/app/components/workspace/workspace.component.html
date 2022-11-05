@@ -6,11 +6,12 @@
             </div>
             <div class="btns-container">
                 <button class="btn orange" (click)="sendText()"><i class='bx bx-right-arrow'></i> Run</button>
-                <button class="btn dark"><i class='bx bx-terminal'></i> Console</button>
+                <button class="btn dark" (click)="limpiar()"><i class='bx bx-terminal'></i> Nuevo</button>
+                <a class="btn orange" href="C:/Users/TheJhonX/Documents/GitHub/OLC1-201900831/Proyecto%202/server/nuevo.olc" [download]=""><i class='bx bx-file'></i> Archivo</a>
             </div>
         </div>
         <div class="code-area">
-            <textarea class="code" placeholder="//MFM Script editor" id="codigo"></textarea>
+            <textarea class="code" placeholder="//MFM Script editor" id="codigo"> {{contenido}} </textarea>
         </div>
         <!-- <div class="console-area">
             <textarea name="" id="" placeholder="//Console" readonly></textarea>

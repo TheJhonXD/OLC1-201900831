@@ -239,7 +239,7 @@ ID : ID 'coma' 'var_name' { $1.push($3); $$ = $1; }
     | 'var_name' { $$ = [$1]; }
 ;
 
-EXPRESSION : 'menos' EXPRESSION %prec 'umenos'
+EXPRESSION : 'menos' EXPRESSION %prec 'umenos' { $$ = new Aritmetica($2, " ", $1, @1.first_line, @1.first_column); }
     | EXPRESSION 'mas' EXPRESSION { $$ = new Aritmetica($1, $3, $2, @1.first_line, @1.first_column); }
     | EXPRESSION 'menos' EXPRESSION { $$ = new Aritmetica($1, $3, $2, @1.first_line, @1.first_column); }
     | EXPRESSION 'multi' EXPRESSION { $$ = new Aritmetica($1, $3, $2, @1.first_line, @1.first_column); }

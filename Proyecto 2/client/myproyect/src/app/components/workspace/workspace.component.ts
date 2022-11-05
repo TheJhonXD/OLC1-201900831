@@ -13,7 +13,8 @@ export class WorkspaceComponent implements OnInit {
 
   constructor(private service:UserService) { }
 
-  public enviar:any;
+  public astGraph:any;
+  public contenido = this.service.contTextArea;
 
   ngOnInit(): void {
   }
@@ -37,9 +38,12 @@ export class WorkspaceComponent implements OnInit {
     let json = {
       code: areaTexto.value
     }
+    this.service.contTextArea = areaTexto.value;
     this.service.sendData(json).subscribe(
       (res:any) => {
-        console.log("enviado con exito");
+        console.log("enviado a backend con exito");
+        this.astGraph = res;
+        console.log(this.astGraph.message);
       },
       (err) => {
         console.log(err);
@@ -48,9 +52,18 @@ export class WorkspaceComponent implements OnInit {
     //console.log(this.prueba);
   }
 
-  dGraph(){
-    wasmFolder('/client/myproyect/src/assets');
-    graphviz('#graph').renderDot('digraph {node[shape=\"box\" style="rounded" fontname="Helvetica"] n1497[label="Global"];n1494[label="tinicio = inicio"];n1497->n1494;}')
+  d3Graph(){
+    // wasmFolder('/client/myproyect/src/assets');
+    // graphviz('#graph').renderDot('digraph {node[shape=\"box\" style="rounded" fontname="Helvetica"] n1497[label="Global"];n1494[label="tinicio = inicio"];n1497->n1494;}')
+    // this.service.getData
   }
 
+  limpiar(){
+    let areaTexto:any = document.querySelector('#codigo');
+    areaTexto.value = "";
+  }
+
+
 }
+
+

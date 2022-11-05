@@ -87,3 +87,36 @@
 .navbar-nav i{
     margin-left: 5px;
 }
+
+.tabla{
+    margin-top: 15px;
+    margin-bottom: 55px;
+}
+
+.tabla p{
+    font-size: 25px;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    font-family: 'Poppins', 'Arial', sans-serif;
+}
+
+table{
+    table-layout: auto;
+    margin: 10px auto;
+    border-collapse: collapse;
+    margin-bottom: 25px;
+    font-family: 'Poppins', 'Arial', sans-serif;
+}
+
+thead tr{
+    background-color: #1880bd;
+}
+
+td, th{
+    padding: 10px 15px;
+}
+
+tr:nth-child(even){
+    background: #bee0f3;
+}
