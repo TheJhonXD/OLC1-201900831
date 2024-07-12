@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.File;
 
 import Errores.ListaError;
 
@@ -44,7 +45,17 @@ public class TablaError {
 
     public void createHtmlFile(ListaError list){
         try {
-            String path = "C:\\Users\\TheJhonX\\Desktop\\AST\\";
+            String currentDir = System.getProperty("user.dir");
+            String path = currentDir + File.separator + "reports" + File.separator;
+            File directory = new File(path);
+            if (!directory.exists()){
+                if (directory.mkdirs()){
+                    System.out.println("Directorio creado");
+                }else{
+                    System.out.println("Error al crear directorio");
+                    return;
+                }
+            }
             FileWriter f = new FileWriter(path + "Tabla.html");
             f.write(createHtmlTable(list));
             f.close();
