@@ -11,9 +11,11 @@ Interfaz del traductor de pseudocodigo a python y golang
 ### Ejemplo de codigo
 
 ![codigo de ejemplo](./img/interfaz_ej_olc1.png)
+
 Se declara la variable `_operaciones1Basica_` de tipo entero y con valor `1+(1)`, luego se imprime dicha variable.
 
 **Codigo traducido**:
+
 ![codigo traducido](./img/traducido_py_olc1.png "traducción a python")
 
 ### Menú Archivo
@@ -34,4 +36,5 @@ Se declara la variable `_operaciones1Basica_` de tipo entero y con valor `1+(1)`
 Muestra el manual tecnico y de usuario.
 
 > **NOTA:**
+>
 > Los reportes que se generan están disponibles en la raiz del proyecto dentro de la carpeta de `reports`
